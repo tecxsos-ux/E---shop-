@@ -1,0 +1,65 @@
+export interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  subCategory: string;
+  image: string;
+  images: string[];
+  stock: number;
+  variants: Variant[];
+  brand: string;
+  isNew?: boolean;
+  discount?: number;
+}
+
+export interface Variant {
+  type: 'color' | 'size';
+  options: string[];
+}
+
+export interface CartItem extends Product {
+  quantity: number;
+  selectedColor?: string;
+  selectedSize?: string;
+}
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: 'admin' | 'customer';
+  avatar?: string;
+}
+
+export enum OrderStatus {
+  Processing = 'Processing',
+  Shipped = 'Shipped',
+  Delivered = 'Delivered',
+  Cancelled = 'Cancelled',
+  Returned = 'Returned'
+}
+
+export interface Order {
+  id: string;
+  userId: string;
+  items: CartItem[];
+  total: number;
+  status: OrderStatus;
+  date: string;
+  shippingAddress: Address;
+}
+
+export interface Address {
+  line1: string;
+  city: string;
+  postalCode: string;
+  country: string;
+}
+
+export interface Category {
+  id: string;
+  name: string;
+  subCategories: string[];
+}

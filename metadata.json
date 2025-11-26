@@ -1,0 +1,8 @@
+{
+  "name": "LuxeMarket AI",
+  "description": "A premium full-stack capable e-commerce platform with AI-powered admin tools, Stripe-like checkout, and comprehensive order management.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
