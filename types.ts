@@ -89,4 +89,5 @@ export interface Settings {
   brandName: string;
   brandLogo: string;
   primaryColor: string;
+  brandTextColor: string;
 }

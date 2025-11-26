@@ -51,11 +51,15 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             
             {/* Logo */}
             <div className="flex-shrink-0 flex items-center">
-              <Link to="/" className="flex items-center gap-2 text-2xl font-bold tracking-tighter text-gray-900">
+              <Link to="/" className="flex items-center gap-2 text-2xl font-bold tracking-tighter" style={{ color: settings.brandTextColor || '#111827' }}>
                 {settings.brandLogo ? (
                    <img src={settings.brandLogo} alt={settings.brandName} className="h-8 w-auto object-contain" />
                 ) : (
-                   <>Luxe<span className="text-indigo-600">Market</span></>
+                   settings.brandName === 'LuxeMarket' ? (
+                     <>Luxe<span className="text-indigo-600">Market</span></>
+                   ) : (
+                     settings.brandName
+                   )
                 )}
               </Link>
             </div>
@@ -254,7 +258,11 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                   {settings.brandLogo ? (
                      <img src={settings.brandLogo} alt={settings.brandName} className="h-8 w-auto grayscale brightness-200" />
                   ) : (
-                     <>Luxe<span className="text-indigo-600">Market</span></>
+                     settings.brandName === 'LuxeMarket' ? (
+                        <>Luxe<span className="text-indigo-600">Market</span></>
+                     ) : (
+                        settings.brandName
+                     )
                   )}
               </h3>
               <p className="text-gray-400 max-w-sm">

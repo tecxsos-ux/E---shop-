@@ -34,8 +34,40 @@ const AdminSettings: React.FC = () => {
                  <Type className="text-gray-400" size={20} /> Brand Identity
              </h3>
              <div className="space-y-4">
-                 {/* Brand Name Input Removed to enforce "LuxeMarket" */}
                  
+                 <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Brand Name</label>
+                    <input 
+                      type="text" 
+                      name="brandName" 
+                      value={form.brandName} 
+                      onChange={handleChange}
+                      placeholder="LuxeMarket"
+                      className="w-full border border-gray-300 rounded-lg p-2.5 text-gray-900 bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    />
+                 </div>
+                 
+                 <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Brand Text Color</label>
+                    <div className="flex items-center gap-4">
+                        <input 
+                          type="color" 
+                          name="brandTextColor" 
+                          value={form.brandTextColor || '#111827'} 
+                          onChange={handleChange}
+                          className="h-10 w-20 p-1 rounded border border-gray-300 cursor-pointer bg-white"
+                        />
+                        <input 
+                          type="text" 
+                          name="brandTextColor"
+                          value={form.brandTextColor || '#111827'}
+                          onChange={handleChange}
+                          className="w-32 border border-gray-300 rounded-lg p-2 text-gray-900 bg-white uppercase"
+                        />
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">Select the color for the brand name text in the navigation.</p>
+                 </div>
+
                  <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Brand Logo URL</label>
                     <div className="flex gap-2">
@@ -45,7 +77,7 @@ const AdminSettings: React.FC = () => {
                         value={form.brandLogo} 
                         onChange={handleChange}
                         placeholder="https://example.com/logo.png"
-                        className="flex-1 border border-gray-300 rounded-lg p-2.5 text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        className="flex-1 border border-gray-300 rounded-lg p-2.5 text-gray-900 bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                         />
                     </div>
                     {form.brandLogo && (
@@ -53,7 +85,7 @@ const AdminSettings: React.FC = () => {
                             <img src={form.brandLogo} alt="Logo Preview" className="h-8 w-auto object-contain" />
                         </div>
                     )}
-                    <p className="text-xs text-gray-500 mt-1">Leave empty to use the default text logo.</p>
+                    <p className="text-xs text-gray-500 mt-1">Leave empty to use the text brand name.</p>
                  </div>
              </div>
           </div>
@@ -72,14 +104,14 @@ const AdminSettings: React.FC = () => {
                         name="primaryColor" 
                         value={form.primaryColor} 
                         onChange={handleChange}
-                        className="h-10 w-20 p-1 rounded border border-gray-300 cursor-pointer"
+                        className="h-10 w-20 p-1 rounded border border-gray-300 cursor-pointer bg-white"
                         />
                         <input 
                           type="text" 
                           name="primaryColor"
                           value={form.primaryColor}
                           onChange={handleChange}
-                          className="w-32 border border-gray-300 rounded-lg p-2 text-gray-900 uppercase"
+                          className="w-32 border border-gray-300 rounded-lg p-2 text-gray-900 bg-white uppercase"
                         />
                     </div>
                     <p className="text-xs text-gray-500 mt-1">This color will be used for buttons, links, and highlights.</p>

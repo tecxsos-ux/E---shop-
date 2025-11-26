@@ -157,7 +157,8 @@ const initialState: State = {
   settings: {
     brandName: 'LuxeMarket',
     brandLogo: '',
-    primaryColor: '#4f46e5' // Default Indigo-600 hex
+    primaryColor: '#4f46e5', // Default Indigo-600 hex
+    brandTextColor: '#111827' // Default Gray-900
   }
 };
 
