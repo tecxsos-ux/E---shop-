@@ -1,6 +1,6 @@
 
 import React, { useState, useContext } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ShoppingBag, Menu, X, User as UserIcon, LogOut, Search, LayoutDashboard, Globe } from 'lucide-react';
 import { StoreContext } from '../context/StoreContext';
 import { useLanguage } from '../context/LanguageContext';
@@ -13,6 +13,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const cartTotal = state.cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
@@ -82,6 +83,13 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 <input 
                   type="text" 
                   placeholder={t('nav.search')} 
+                  value={state.filters.search}
+                  onChange={(e) => dispatch({ type: 'SET_SEARCH', payload: e.target.value })}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      navigate('/shop');
+                    }
+                  }}
                   className="pl-10 pr-4 py-2 border border-gray-200 rounded-full text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 w-64 transition-all text-gray-700 bg-gray-50 placeholder-gray-400"
                 />
                 <Search className="absolute left-3 top-2.5 text-gray-400 w-4 h-4" />

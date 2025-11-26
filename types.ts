@@ -46,6 +46,9 @@ export interface Order {
   id: string;
   userId: string;
   items: CartItem[];
+  subtotal: number;
+  tax: number;
+  shippingCost: number;
   total: number;
   status: OrderStatus;
   date: string;
@@ -90,4 +93,6 @@ export interface Settings {
   brandLogo: string;
   primaryColor: string;
   brandTextColor: string;
+  taxRate: number; // Percentage
+  shippingCost: number; // Flat rate
 }

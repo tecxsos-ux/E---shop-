@@ -142,7 +142,10 @@ const initialState: State = {
        userId: 'u1',
        date: new Date().toISOString(),
        status: OrderStatus.Delivered,
-       total: 129.99,
+       subtotal: 129.99,
+       tax: 10.40,
+       shippingCost: 0,
+       total: 140.39,
        shippingAddress: { line1: '123 Fake St', city: 'Springfield', postalCode: '90210', country: 'USA' },
        items: [{ ...initialProducts[0], quantity: 1 }]
     }
@@ -158,7 +161,9 @@ const initialState: State = {
     brandName: 'LuxeMarket',
     brandLogo: '',
     primaryColor: '#4f46e5', // Default Indigo-600 hex
-    brandTextColor: '#111827' // Default Gray-900
+    brandTextColor: '#111827', // Default Gray-900
+    taxRate: 8, // 8% default
+    shippingCost: 15 // $15 default flat rate
   }
 };
 
@@ -174,6 +179,7 @@ type Action =
   | { type: 'UPDATE_ORDER_STATUS'; payload: { id: string; status: OrderStatus } }
   | { type: 'SET_FILTER_CATEGORY'; payload: string | null }
   | { type: 'SET_FILTER_SUBCATEGORY'; payload: string | null }
+  | { type: 'SET_SEARCH'; payload: string }
   | { type: 'ADD_SLIDE'; payload: Slide }
   | { type: 'UPDATE_SLIDE'; payload: Slide }
   | { type: 'DELETE_SLIDE'; payload: string }
@@ -245,6 +251,8 @@ const storeReducer = (state: State, action: Action): State => {
       return { ...state, filters: { ...state.filters, category: action.payload, subCategory: null } };
     case 'SET_FILTER_SUBCATEGORY':
       return { ...state, filters: { ...state.filters, subCategory: action.payload } };
+    case 'SET_SEARCH':
+      return { ...state, filters: { ...state.filters, search: action.payload } };
     case 'ADD_SLIDE':
       return { ...state, slides: [...state.slides, action.payload] };
     case 'UPDATE_SLIDE':

@@ -13,7 +13,12 @@ const Checkout: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   
-  const total = state.cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  // Calculations
+  const subtotal = state.cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const taxRate = state.settings.taxRate || 0;
+  const taxAmount = subtotal * (taxRate / 100);
+  const shippingCost = state.settings.shippingCost || 0;
+  const total = subtotal + taxAmount + shippingCost;
 
   const [form, setForm] = useState({
     line1: '',
@@ -43,6 +48,9 @@ const Checkout: React.FC = () => {
          id: `ORD-${Math.floor(Math.random() * 10000)}`,
          userId: state.user?.id || 'guest',
          items: [...state.cart],
+         subtotal: subtotal,
+         tax: taxAmount,
+         shippingCost: shippingCost,
          total: total,
          status: OrderStatus.Processing,
          date: new Date().toISOString(),
@@ -204,11 +212,15 @@ const Checkout: React.FC = () => {
            <div className="border-t border-gray-200 pt-4 space-y-2">
               <div className="flex justify-between">
                  <p className="text-gray-600">{t('nav.subtotal')}</p>
-                 <p>${total.toFixed(2)}</p>
+                 <p>${subtotal.toFixed(2)}</p>
               </div>
               <div className="flex justify-between">
                  <p className="text-gray-600">{t('checkout.shipping')}</p>
-                 <p>{t('checkout.free')}</p>
+                 <p>{shippingCost === 0 ? t('checkout.free') : `$${shippingCost.toFixed(2)}`}</p>
+              </div>
+              <div className="flex justify-between">
+                 <p className="text-gray-600">Tax ({taxRate}%)</p>
+                 <p>${taxAmount.toFixed(2)}</p>
               </div>
               <div className="flex justify-between text-xl font-bold text-gray-900 pt-2 border-t">
                  <p>{t('checkout.total')}</p>

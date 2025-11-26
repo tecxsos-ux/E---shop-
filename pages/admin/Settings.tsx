@@ -2,7 +2,7 @@
 import React, { useContext, useState } from 'react';
 import { StoreContext } from '../../context/StoreContext';
 import AdminLayout from '../../components/AdminLayout';
-import { Save, Image as ImageIcon, Type, Palette } from 'lucide-react';
+import { Save, Image as ImageIcon, Type, Palette, DollarSign } from 'lucide-react';
 
 const AdminSettings: React.FC = () => {
   const { state, dispatch } = useContext(StoreContext);
@@ -10,6 +10,10 @@ const AdminSettings: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+  
+  const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setForm({ ...form, [e.target.name]: Number(e.target.value) });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -88,6 +92,41 @@ const AdminSettings: React.FC = () => {
                     <p className="text-xs text-gray-500 mt-1">Leave empty to use the text brand name.</p>
                  </div>
              </div>
+          </div>
+          
+          {/* Financial Settings */}
+          <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+             <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                 <DollarSign className="text-gray-400" size={20} /> Financial Settings
+             </h3>
+             <div className="grid grid-cols-2 gap-6">
+                 <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Tax Rate (%)</label>
+                    <input 
+                      type="number" 
+                      name="taxRate" 
+                      value={form.taxRate} 
+                      onChange={handleNumberChange}
+                      min="0"
+                      step="0.01"
+                      className="w-full border border-gray-300 rounded-lg p-2.5 text-gray-900 bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    />
+                 </div>
+                 
+                 <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Shipping Cost ($)</label>
+                    <input 
+                      type="number" 
+                      name="shippingCost" 
+                      value={form.shippingCost} 
+                      onChange={handleNumberChange}
+                      min="0"
+                      step="0.01"
+                      className="w-full border border-gray-300 rounded-lg p-2.5 text-gray-900 bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    />
+                 </div>
+             </div>
+             <p className="text-xs text-gray-500 mt-2">These values will be applied to all new orders at checkout.</p>
           </div>
 
           {/* Theme */}
