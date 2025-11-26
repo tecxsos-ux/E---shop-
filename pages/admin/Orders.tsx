@@ -48,7 +48,7 @@ const AdminOrders: React.FC = () => {
                   <select 
                     value={order.status}
                     onChange={(e) => handleStatusChange(order.id, e.target.value as OrderStatus)}
-                    className="border border-gray-300 rounded text-xs p-1"
+                    className="border border-gray-300 rounded text-xs p-1 text-gray-700 bg-white focus:outline-none focus:ring-1 focus:ring-indigo-500"
                   >
                     {Object.values(OrderStatus).map(status => (
                         <option key={status} value={status}>{status}</option>

@@ -137,42 +137,42 @@ const AdminProducts: React.FC = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Product Name</label>
-                  <input required name="name" value={form.name} onChange={handleInputChange} className="mt-1 w-full border rounded-md p-2" />
+                  <input required name="name" value={form.name} onChange={handleInputChange} className="mt-1 w-full border border-gray-300 rounded-md p-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Brand</label>
-                  <input name="brand" value={form.brand} onChange={handleInputChange} className="mt-1 w-full border rounded-md p-2" />
+                  <input name="brand" value={form.brand} onChange={handleInputChange} className="mt-1 w-full border border-gray-300 rounded-md p-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
                 </div>
               </div>
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Price</label>
-                  <input required type="number" name="price" value={form.price} onChange={handleInputChange} className="mt-1 w-full border rounded-md p-2" />
+                  <input required type="number" name="price" value={form.price} onChange={handleInputChange} className="mt-1 w-full border border-gray-300 rounded-md p-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
                 </div>
                  <div>
                   <label className="block text-sm font-medium text-gray-700">Stock</label>
-                  <input required type="number" name="stock" value={form.stock} onChange={handleInputChange} className="mt-1 w-full border rounded-md p-2" />
+                  <input required type="number" name="stock" value={form.stock} onChange={handleInputChange} className="mt-1 w-full border border-gray-300 rounded-md p-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                  <div>
                     <label className="block text-sm font-medium text-gray-700">Category</label>
-                    <select name="category" value={form.category} onChange={handleInputChange} className="mt-1 w-full border rounded-md p-2 bg-white">
+                    <select name="category" value={form.category} onChange={handleInputChange} className="mt-1 w-full border border-gray-300 rounded-md p-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
                         {state.categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
                     </select>
                  </div>
                  <div>
                     <label className="block text-sm font-medium text-gray-700">Sub Category</label>
-                    <input name="subCategory" value={form.subCategory} onChange={handleInputChange} className="mt-1 w-full border rounded-md p-2" />
+                    <input name="subCategory" value={form.subCategory} onChange={handleInputChange} className="mt-1 w-full border border-gray-300 rounded-md p-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
                  </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700">Image URL</label>
                 <div className="flex gap-2 mt-1">
-                  <input required name="image" value={form.image} onChange={handleInputChange} placeholder="https://..." className="flex-1 border rounded-md p-2" />
+                  <input required name="image" value={form.image} onChange={handleInputChange} placeholder="https://..." className="flex-1 border border-gray-300 rounded-md p-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
                   <button type="button" onClick={handleRemoveBackground} disabled={bgRemovalLoading} className="px-3 py-2 bg-purple-100 text-purple-700 rounded-md text-sm font-medium hover:bg-purple-200 flex items-center gap-1">
                       {bgRemovalLoading ? <Loader2 className="animate-spin w-4 h-4" /> : <Wand2 className="w-4 h-4" />} Remove BG
                   </button>
@@ -191,7 +191,7 @@ const AdminProducts: React.FC = () => {
                     {aiLoading ? <Loader2 className="animate-spin w-3 h-3" /> : <Wand2 className="w-3 h-3" />} Generate with AI
                   </button>
                 </div>
-                <textarea required name="description" value={form.description} onChange={handleInputChange} rows={4} className="w-full border rounded-md p-2" />
+                <textarea required name="description" value={form.description} onChange={handleInputChange} rows={4} className="w-full border border-gray-300 rounded-md p-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
               </div>
 
               <div className="flex justify-end gap-3 pt-4 border-t">

@@ -87,7 +87,7 @@ const Profile: React.FC = () => {
                 type="password" 
                 value={passwordForm.current}
                 onChange={e => setPasswordForm({...passwordForm, current: e.target.value})}
-                className="mt-1 w-full border rounded-md p-2" 
+                className="mt-1 w-full border border-gray-300 rounded-md p-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" 
               />
             </div>
             <div>
@@ -96,7 +96,7 @@ const Profile: React.FC = () => {
                  type="password" 
                  value={passwordForm.new}
                  onChange={e => setPasswordForm({...passwordForm, new: e.target.value})}
-                 className="mt-1 w-full border rounded-md p-2" 
+                 className="mt-1 w-full border border-gray-300 rounded-md p-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" 
               />
             </div>
             <div>
@@ -105,7 +105,7 @@ const Profile: React.FC = () => {
                  type="password" 
                  value={passwordForm.confirm}
                  onChange={e => setPasswordForm({...passwordForm, confirm: e.target.value})}
-                 className="mt-1 w-full border rounded-md p-2" 
+                 className="mt-1 w-full border border-gray-300 rounded-md p-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" 
               />
             </div>
             <button className="w-full bg-gray-900 text-white py-2 rounded-md hover:bg-gray-800 transition">

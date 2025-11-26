@@ -1,56 +1,151 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { StoreContext } from '../context/StoreContext';
-import { ArrowRight, ShoppingBag, ShieldCheck, Truck, Star } from 'lucide-react';
+import { ArrowRight, ShoppingBag, ShieldCheck, Truck, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Home: React.FC = () => {
   const { state } = useContext(StoreContext);
   const newArrivals = state.products.filter(p => p.isNew).slice(0, 4);
   const todayOffers = state.products.filter(p => p.discount).slice(0, 4);
+  
+  // Use slides from global state
+  const slides = state.slides;
+
+  // Carousel State
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  // Auto-slide effect
+  useEffect(() => {
+    if (slides.length === 0) return;
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 6000);
+    return () => clearInterval(interval);
+  }, [slides.length]);
+
+  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % slides.length);
+  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
 
   return (
-    <div className="flex flex-col gap-16 pb-20 bg-gray-50/50">
-      {/* Hero Slider / Banner */}
-      <section className="relative bg-gray-900 text-white h-[600px] flex items-center overflow-hidden">
-        <div className="absolute inset-0">
-          <img 
-            src="https://picsum.photos/1920/1080?grayscale" 
-            alt="Hero Background" 
-            className="w-full h-full object-cover opacity-40 scale-105 animate-slow-zoom"
-          />
-        </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-transparent to-transparent"></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
-          <div className="max-w-2xl animate-fade-in-up">
-            <span className="inline-block py-1 px-3 rounded-full bg-indigo-600/30 border border-indigo-500 text-indigo-300 font-semibold tracking-wider uppercase text-xs mb-4 backdrop-blur-sm">Summer Collection 2024</span>
-            <h1 className="text-5xl md:text-7xl font-bold leading-tight drop-shadow-lg">Redefine Your <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-300">Style Statement</span></h1>
-            <p className="mt-6 text-xl text-gray-300 max-w-lg leading-relaxed">Discover the latest trends in luxury fashion and technology. Exclusive items, curated just for you.</p>
-            <div className="mt-10 flex gap-4">
-              <Link to="/shop" className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-full font-bold transition-all shadow-lg hover:shadow-indigo-500/30 hover:-translate-y-1 flex items-center gap-2">
-                Shop Now <ArrowRight className="w-5 h-5" />
-              </Link>
-              <Link to="/shop" className="bg-white/10 hover:bg-white/20 text-white px-8 py-4 rounded-full font-bold transition-all backdrop-blur-md border border-white/10">
-                View Lookbook
-              </Link>
-            </div>
+    <div className="flex flex-col gap-12 pb-20 bg-gray-50/50">
+      
+      {/* Hero Grid Section */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-auto lg:h-[550px]">
+          
+          {/* Main Carousel - Spans 3 columns */}
+          <div className="lg:col-span-3 relative rounded-2xl overflow-hidden shadow-xl group h-[400px] lg:h-full bg-gray-200">
+            {slides.length > 0 ? (
+              <>
+                {slides.map((slide, index) => (
+                  <div 
+                    key={slide.id} 
+                    className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+                  >
+                    <img 
+                      src={slide.image} 
+                      alt={slide.title} 
+                      className={`w-full h-full object-cover transition-transform duration-[6000ms] ${index === currentSlide ? 'scale-110' : 'scale-100'}`} 
+                    />
+                    {/* Gradient Overlay */}
+                    <div className={`absolute inset-0 bg-gradient-to-r ${slide.color} via-black/40 to-transparent`}></div>
+                    
+                    {/* Content */}
+                    <div className="absolute inset-0 flex flex-col justify-center items-start p-8 md:p-16 text-white max-w-2xl">
+                       <span className="inline-block py-1 px-3 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white font-semibold tracking-wider uppercase text-xs mb-4 animate-fade-in-up">
+                          Featured Collection
+                       </span>
+                       <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-4 drop-shadow-lg animate-fade-in-up delay-100">
+                         {slide.title}
+                       </h1>
+                       <p className="text-lg md:text-xl text-gray-200 mb-8 leading-relaxed animate-fade-in-up delay-200">
+                         {slide.subtitle}
+                       </p>
+                       <Link 
+                         to={slide.link} 
+                         className="bg-white text-gray-900 px-8 py-3 rounded-full font-bold transition-all hover:bg-indigo-50 hover:shadow-lg hover:scale-105 flex items-center gap-2 animate-fade-in-up delay-300"
+                       >
+                         Shop Now <ArrowRight className="w-5 h-5" />
+                       </Link>
+                    </div>
+                  </div>
+                ))}
+
+                {/* Carousel Controls */}
+                <div className="absolute bottom-6 right-6 z-20 flex gap-2">
+                  <button onClick={prevSlide} className="p-2 rounded-full bg-white/10 hover:bg-white/30 backdrop-blur-md text-white border border-white/20 transition-all">
+                    <ChevronLeft size={24} />
+                  </button>
+                  <button onClick={nextSlide} className="p-2 rounded-full bg-white/10 hover:bg-white/30 backdrop-blur-md text-white border border-white/20 transition-all">
+                    <ChevronRight size={24} />
+                  </button>
+                </div>
+                
+                {/* Dots */}
+                <div className="absolute bottom-6 left-8 z-20 flex gap-2">
+                  {slides.map((_, idx) => (
+                    <button 
+                      key={idx}
+                      onClick={() => setCurrentSlide(idx)}
+                      className={`h-2 rounded-full transition-all duration-300 ${idx === currentSlide ? 'w-8 bg-white' : 'w-2 bg-white/40 hover:bg-white/60'}`}
+                    />
+                  ))}
+                </div>
+              </>
+            ) : (
+               <div className="flex items-center justify-center h-full text-gray-500">
+                  <p>No slides available. Please configure in Admin Panel.</p>
+               </div>
+            )}
+          </div>
+
+          {/* Right Side Banners - Spans 1 column */}
+          <div className="lg:col-span-1 flex flex-col gap-6 h-auto lg:h-[550px]">
+             
+             {/* Banner Top */}
+             <Link to="/shop?category=Clothing" className="flex-1 relative rounded-2xl overflow-hidden shadow-lg group h-[260px] lg:h-auto">
+                <img src="https://picsum.photos/600/800?random=201" alt="Men's Fashion" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                <div className="absolute bottom-0 left-0 p-6 w-full">
+                   <span className="text-xs font-bold text-indigo-300 uppercase tracking-wider mb-1 block">Trending</span>
+                   <h3 className="text-2xl font-bold text-white mb-2">Streetwear</h3>
+                   <span className="text-sm font-medium text-white group-hover:underline flex items-center gap-1">
+                      Browse Collection <ArrowRight size={14} />
+                   </span>
+                </div>
+             </Link>
+
+             {/* Banner Bottom */}
+             <Link to="/shop?category=Electronics" className="flex-1 relative rounded-2xl overflow-hidden shadow-lg group h-[260px] lg:h-auto">
+                <img src="https://picsum.photos/600/800?random=202" alt="Accessories" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                <div className="absolute bottom-0 left-0 p-6 w-full">
+                   <span className="text-xs font-bold text-indigo-300 uppercase tracking-wider mb-1 block">Best Sellers</span>
+                   <h3 className="text-2xl font-bold text-white mb-2">Audio Gear</h3>
+                   <span className="text-sm font-medium text-white group-hover:underline flex items-center gap-1">
+                      Shop Now <ArrowRight size={14} />
+                   </span>
+                </div>
+             </Link>
+
           </div>
         </div>
       </section>
 
       {/* Features */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full -mt-20 relative z-20">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mt-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-           <div className="flex items-center gap-4 p-8 bg-white/90 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 hover:-translate-y-1 transition-transform duration-300">
-             <div className="p-4 bg-indigo-50 text-indigo-600 rounded-2xl shadow-inner"><Truck size={28} /></div>
-             <div><h3 className="font-bold text-gray-900 text-lg">Free Shipping</h3><p className="text-sm text-gray-500 mt-1">On all orders over $200</p></div>
+           <div className="flex items-center gap-4 p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+             <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl"><Truck size={24} /></div>
+             <div><h3 className="font-bold text-gray-900">Free Shipping</h3><p className="text-xs text-gray-500 mt-1">On orders over $200</p></div>
            </div>
-           <div className="flex items-center gap-4 p-8 bg-white/90 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 hover:-translate-y-1 transition-transform duration-300">
-             <div className="p-4 bg-emerald-50 text-emerald-600 rounded-2xl shadow-inner"><ShieldCheck size={28} /></div>
-             <div><h3 className="font-bold text-gray-900 text-lg">Secure Payment</h3><p className="text-sm text-gray-500 mt-1">100% secure payment</p></div>
+           <div className="flex items-center gap-4 p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+             <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl"><ShieldCheck size={24} /></div>
+             <div><h3 className="font-bold text-gray-900">Secure Payment</h3><p className="text-xs text-gray-500 mt-1">100% secure checkout</p></div>
            </div>
-           <div className="flex items-center gap-4 p-8 bg-white/90 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 hover:-translate-y-1 transition-transform duration-300">
-             <div className="p-4 bg-purple-50 text-purple-600 rounded-2xl shadow-inner"><ShoppingBag size={28} /></div>
-             <div><h3 className="font-bold text-gray-900 text-lg">30 Day Returns</h3><p className="text-sm text-gray-500 mt-1">Hassle free returns</p></div>
+           <div className="flex items-center gap-4 p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+             <div className="p-3 bg-purple-50 text-purple-600 rounded-xl"><ShoppingBag size={24} /></div>
+             <div><h3 className="font-bold text-gray-900">30 Day Returns</h3><p className="text-xs text-gray-500 mt-1">Money back guarantee</p></div>
            </div>
         </div>
       </section>

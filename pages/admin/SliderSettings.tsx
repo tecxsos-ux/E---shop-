@@ -1,0 +1,208 @@
+import React, { useContext, useState } from 'react';
+import { StoreContext } from '../../context/StoreContext';
+import AdminLayout from '../../components/AdminLayout';
+import { Plus, Edit2, Trash2, Eye, Image as ImageIcon } from 'lucide-react';
+import { Slide } from '../../types';
+
+const AdminSliderSettings: React.FC = () => {
+  const { state, dispatch } = useContext(StoreContext);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingSlide, setEditingSlide] = useState<Slide | null>(null);
+
+  const [form, setForm] = useState<Omit<Slide, 'id'>>({
+    title: '',
+    subtitle: '',
+    description: '',
+    image: '',
+    link: '',
+    color: 'from-indigo-900/90'
+  });
+
+  const colorOptions = [
+    { label: 'Indigo', value: 'from-indigo-900/90' },
+    { label: 'Blue', value: 'from-blue-900/90' },
+    { label: 'Emerald', value: 'from-emerald-900/90' },
+    { label: 'Purple', value: 'from-purple-900/90' },
+    { label: 'Dark Gray', value: 'from-gray-900/90' },
+    { label: 'Red', value: 'from-red-900/90' }
+  ];
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const openAddModal = () => {
+    setEditingSlide(null);
+    setForm({
+      title: '',
+      subtitle: '',
+      description: '',
+      image: '',
+      link: '',
+      color: 'from-indigo-900/90'
+    });
+    setIsModalOpen(true);
+  };
+
+  const openEditModal = (slide: Slide) => {
+    setEditingSlide(slide);
+    setForm({
+      title: slide.title,
+      subtitle: slide.subtitle,
+      description: slide.description,
+      image: slide.image,
+      link: slide.link,
+      color: slide.color
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = (id: string) => {
+    if (window.confirm('Are you sure you want to delete this slide?')) {
+      dispatch({ type: 'DELETE_SLIDE', payload: id });
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (editingSlide) {
+      dispatch({ 
+        type: 'UPDATE_SLIDE', 
+        payload: { ...form, id: editingSlide.id } 
+      });
+    } else {
+      dispatch({ 
+        type: 'ADD_SLIDE', 
+        payload: { ...form, id: Date.now().toString() } 
+      });
+    }
+    
+    setIsModalOpen(false);
+  };
+
+  return (
+    <AdminLayout>
+      <div className="flex justify-between items-center mb-8">
+        <div>
+           <h1 className="text-2xl font-bold text-gray-900">Slider Settings</h1>
+           <p className="text-gray-500 text-sm mt-1">Manage the main homepage carousel slides.</p>
+        </div>
+        <button 
+          onClick={openAddModal}
+          className="bg-indigo-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-indigo-700 transition"
+        >
+          <Plus size={20} /> Add Slide
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6">
+        {state.slides.length === 0 ? (
+           <div className="bg-white p-12 text-center rounded-xl border border-dashed border-gray-300">
+              <ImageIcon className="mx-auto h-12 w-12 text-gray-400" />
+              <h3 className="mt-2 text-sm font-medium text-gray-900">No slides</h3>
+              <p className="mt-1 text-sm text-gray-500">Get started by creating a new slide.</p>
+           </div>
+        ) : (
+          state.slides.map(slide => (
+            <div key={slide.id} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col md:flex-row h-auto md:h-56">
+               <div className="w-full md:w-1/3 relative bg-gray-100">
+                  <img src={slide.image} alt={slide.title} className="w-full h-full object-cover" />
+                  <div className={`absolute inset-0 bg-gradient-to-r ${slide.color} via-transparent to-transparent opacity-80`}></div>
+                  <div className="absolute bottom-3 left-3 bg-black/50 text-white text-xs px-2 py-1 rounded">
+                     Preview
+                  </div>
+               </div>
+               <div className="flex-1 p-6 flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-1">{slide.title}</h3>
+                    <p className="text-indigo-600 font-medium text-sm mb-2">{slide.subtitle}</p>
+                    <p className="text-gray-500 text-sm line-clamp-2">{slide.description}</p>
+                    <div className="mt-4 flex gap-2">
+                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                          Link: {slide.link}
+                       </span>
+                    </div>
+                  </div>
+                  <div className="flex justify-end gap-3 mt-4 md:mt-0">
+                     <button 
+                        onClick={() => openEditModal(slide)} 
+                        className="flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-800 px-3 py-2 rounded-lg hover:bg-blue-50 transition"
+                     >
+                        <Edit2 size={16} /> Edit
+                     </button>
+                     <button 
+                        onClick={() => handleDelete(slide.id)} 
+                        className="flex items-center gap-1 text-sm font-medium text-red-600 hover:text-red-800 px-3 py-2 rounded-lg hover:bg-red-50 transition"
+                     >
+                        <Trash2 size={16} /> Delete
+                     </button>
+                  </div>
+               </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6">
+            <h2 className="text-2xl font-bold mb-6">{editingSlide ? 'Edit Slide' : 'Add New Slide'}</h2>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Title</label>
+                  <input required name="title" value={form.title} onChange={handleInputChange} className="mt-1 w-full border border-gray-300 rounded-md p-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="e.g. Summer Sale" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Subtitle</label>
+                  <input required name="subtitle" value={form.subtitle} onChange={handleInputChange} className="mt-1 w-full border border-gray-300 rounded-md p-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="e.g. Up to 50% Off" />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Description</label>
+                <textarea required name="description" value={form.description} onChange={handleInputChange} rows={3} className="mt-1 w-full border border-gray-300 rounded-md p-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Short description..." />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Image URL</label>
+                <input required name="image" value={form.image} onChange={handleInputChange} className="mt-1 w-full border border-gray-300 rounded-md p-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="https://..." />
+                {form.image && (
+                   <div className="mt-2 h-32 w-full border rounded-md overflow-hidden bg-gray-50 relative">
+                      <img src={form.image} alt="Preview" className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/20 text-white text-xs font-bold">Image Preview</div>
+                   </div>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Link Path</label>
+                  <input required name="link" value={form.link} onChange={handleInputChange} className="mt-1 w-full border border-gray-300 rounded-md p-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="/shop?category=..." />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Overlay Color</label>
+                  <select name="color" value={form.color} onChange={handleInputChange} className="mt-1 w-full border border-gray-300 rounded-md p-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                     {colorOptions.map(opt => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                     ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-6 border-t mt-4">
+                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition">Cancel</button>
+                <button type="submit" className="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 shadow-md transition">Save Slide</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </AdminLayout>
+  );
+};
+
+export default AdminSliderSettings;

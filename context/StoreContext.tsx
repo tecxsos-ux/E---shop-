@@ -1,5 +1,5 @@
 import React, { createContext, useReducer, useEffect } from 'react';
-import { Product, CartItem, User, Order, Category, OrderStatus } from '../types';
+import { Product, CartItem, User, Order, Category, OrderStatus, Slide } from '../types';
 
 interface State {
   products: Product[];
@@ -7,6 +7,7 @@ interface State {
   cart: CartItem[];
   user: User | null;
   orders: Order[];
+  slides: Slide[];
   filters: {
     category: string | null;
     subCategory: string | null;
@@ -78,6 +79,36 @@ const initialCategories: Category[] = [
   { id: '3', name: 'Accessories', subCategories: ['Watches', 'Bags', 'Jewelry'] },
 ];
 
+const initialSlides: Slide[] = [
+  {
+    id: "1",
+    title: "Summer Collection 2024",
+    subtitle: "Redefine Your Style Statement",
+    description: "Discover the latest trends in luxury fashion. Exclusive items curated just for you.",
+    image: "https://picsum.photos/1600/900?random=101",
+    link: "/shop?category=Clothing",
+    color: "from-indigo-900/90"
+  },
+  {
+    id: "2",
+    title: "Next Gen Electronics",
+    subtitle: "Upgrade Your Digital Life",
+    description: "Experience superior performance with our latest tech gadgets and accessories.",
+    image: "https://picsum.photos/1600/900?random=102",
+    link: "/shop?category=Electronics",
+    color: "from-blue-900/90"
+  },
+  {
+    id: "3",
+    title: "Premium Accessories",
+    subtitle: "The Perfect Finishing Touch",
+    description: "Elevate your daily look with our hand-picked selection of watches and jewelry.",
+    image: "https://picsum.photos/1600/900?random=103",
+    link: "/shop?category=Accessories",
+    color: "from-emerald-900/90"
+  }
+];
+
 const initialState: State = {
   products: initialProducts,
   categories: initialCategories,
@@ -94,6 +125,7 @@ const initialState: State = {
        items: [{ ...initialProducts[0], quantity: 1 }]
     }
   ],
+  slides: initialSlides,
   filters: {
     category: null,
     subCategory: null,
@@ -112,7 +144,10 @@ type Action =
   | { type: 'ADD_ORDER'; payload: Order }
   | { type: 'UPDATE_ORDER_STATUS'; payload: { id: string; status: OrderStatus } }
   | { type: 'SET_FILTER_CATEGORY'; payload: string | null }
-  | { type: 'SET_FILTER_SUBCATEGORY'; payload: string | null };
+  | { type: 'SET_FILTER_SUBCATEGORY'; payload: string | null }
+  | { type: 'ADD_SLIDE'; payload: Slide }
+  | { type: 'UPDATE_SLIDE'; payload: Slide }
+  | { type: 'DELETE_SLIDE'; payload: string };
 
 const storeReducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -177,6 +212,12 @@ const storeReducer = (state: State, action: Action): State => {
       return { ...state, filters: { ...state.filters, category: action.payload, subCategory: null } };
     case 'SET_FILTER_SUBCATEGORY':
       return { ...state, filters: { ...state.filters, subCategory: action.payload } };
+    case 'ADD_SLIDE':
+      return { ...state, slides: [...state.slides, action.payload] };
+    case 'UPDATE_SLIDE':
+      return { ...state, slides: state.slides.map(s => s.id === action.payload.id ? action.payload : s) };
+    case 'DELETE_SLIDE':
+      return { ...state, slides: state.slides.filter(s => s.id !== action.payload) };
     default:
       return state;
   }

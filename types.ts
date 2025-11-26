@@ -63,3 +63,13 @@ export interface Category {
   name: string;
   subCategories: string[];
 }
+
+export interface Slide {
+  id: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  image: string;
+  link: string;
+  color: string;
+}

@@ -91,12 +91,34 @@ const Checkout: React.FC = () => {
            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
               <h2 className="text-xl font-semibold mb-4">Shipping Information</h2>
               <div className="space-y-4">
-                 <input required name="line1" placeholder="Address Line 1" onChange={handleInputChange} className="w-full p-3 border rounded-md" />
+                 <input 
+                   required 
+                   name="line1" 
+                   placeholder="Address Line 1" 
+                   onChange={handleInputChange} 
+                   className="w-full p-3 border border-gray-300 rounded-md text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent placeholder-gray-400" 
+                 />
                  <div className="grid grid-cols-2 gap-4">
-                    <input required name="city" placeholder="City" onChange={handleInputChange} className="w-full p-3 border rounded-md" />
-                    <input required name="postalCode" placeholder="Postal Code" onChange={handleInputChange} className="w-full p-3 border rounded-md" />
+                    <input 
+                      required 
+                      name="city" 
+                      placeholder="City" 
+                      onChange={handleInputChange} 
+                      className="w-full p-3 border border-gray-300 rounded-md text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent placeholder-gray-400" 
+                    />
+                    <input 
+                      required 
+                      name="postalCode" 
+                      placeholder="Postal Code" 
+                      onChange={handleInputChange} 
+                      className="w-full p-3 border border-gray-300 rounded-md text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent placeholder-gray-400" 
+                    />
                  </div>
-                 <select name="country" onChange={handleInputChange} className="w-full p-3 border rounded-md bg-white">
+                 <select 
+                   name="country" 
+                   onChange={handleInputChange} 
+                   className="w-full p-3 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                 >
                     <option value="US">United States</option>
                     <option value="CA">Canada</option>
                     <option value="UK">United Kingdom</option>
@@ -109,11 +131,38 @@ const Checkout: React.FC = () => {
                   <CreditCard className="w-5 h-5" /> Payment Details (Stripe Mock)
               </h2>
               <div className="space-y-4">
-                 <input required name="cardName" placeholder="Name on Card" onChange={handleInputChange} className="w-full p-3 border rounded-md" />
-                 <input required name="cardNumber" placeholder="Card Number" maxLength={16} onChange={handleInputChange} className="w-full p-3 border rounded-md" />
+                 <input 
+                   required 
+                   name="cardName" 
+                   placeholder="Name on Card" 
+                   onChange={handleInputChange} 
+                   className="w-full p-3 border border-gray-300 rounded-md text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent placeholder-gray-400" 
+                 />
+                 <input 
+                   required 
+                   name="cardNumber" 
+                   placeholder="Card Number" 
+                   maxLength={16} 
+                   onChange={handleInputChange} 
+                   className="w-full p-3 border border-gray-300 rounded-md text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent placeholder-gray-400" 
+                 />
                  <div className="grid grid-cols-2 gap-4">
-                    <input required name="expiry" placeholder="MM/YY" maxLength={5} onChange={handleInputChange} className="w-full p-3 border rounded-md" />
-                    <input required name="cvc" placeholder="CVC" maxLength={3} onChange={handleInputChange} className="w-full p-3 border rounded-md" />
+                    <input 
+                      required 
+                      name="expiry" 
+                      placeholder="MM/YY" 
+                      maxLength={5} 
+                      onChange={handleInputChange} 
+                      className="w-full p-3 border border-gray-300 rounded-md text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent placeholder-gray-400" 
+                    />
+                    <input 
+                      required 
+                      name="cvc" 
+                      placeholder="CVC" 
+                      maxLength={3} 
+                      onChange={handleInputChange} 
+                      className="w-full p-3 border border-gray-300 rounded-md text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent placeholder-gray-400" 
+                    />
                  </div>
               </div>
            </div>

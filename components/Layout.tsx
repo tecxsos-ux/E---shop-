@@ -29,6 +29,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <div className="hidden md:flex space-x-8 items-center">
               <Link to="/" className={`${location.pathname === '/' ? 'text-indigo-600' : 'text-gray-600'} hover:text-indigo-600 font-medium transition`}>Home</Link>
               <Link to="/shop" className={`${location.pathname === '/shop' ? 'text-indigo-600' : 'text-gray-600'} hover:text-indigo-600 font-medium transition`}>Shop</Link>
+              <Link to="/contact" className={`${location.pathname === '/contact' ? 'text-indigo-600' : 'text-gray-600'} hover:text-indigo-600 font-medium transition`}>Contact</Link>
               {state.user?.role === 'admin' && (
                  <Link to="/admin/dashboard" className="text-amber-600 hover:text-amber-700 font-medium transition flex items-center gap-1">
                    <LayoutDashboard size={16} /> Admin
@@ -42,7 +43,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 <input 
                   type="text" 
                   placeholder="Search..." 
-                  className="pl-10 pr-4 py-2 border border-gray-200 rounded-full text-sm focus:outline-none focus:border-indigo-500 w-64 transition-all"
+                  className="pl-10 pr-4 py-2 border border-gray-200 rounded-full text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 w-64 transition-all text-gray-700 bg-gray-50 placeholder-gray-400"
                 />
                 <Search className="absolute left-3 top-2.5 text-gray-400 w-4 h-4" />
               </div>
@@ -80,6 +81,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           <div className="md:hidden bg-white border-t border-gray-100 py-4 px-4 space-y-3">
              <Link to="/" className="block text-gray-800 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
              <Link to="/shop" className="block text-gray-800 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Shop</Link>
+             <Link to="/contact" className="block text-gray-800 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Contact</Link>
              <Link to="/profile" className="block text-gray-800 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Profile</Link>
              {state.user?.role === 'admin' && (
                <Link to="/admin/dashboard" className="block text-amber-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Admin Dashboard</Link>
@@ -190,6 +192,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               <h4 className="font-semibold mb-4">Support</h4>
               <ul className="space-y-2 text-gray-400">
                 <li><Link to="/profile" className="hover:text-white transition">My Account</Link></li>
+                <li><Link to="/contact" className="hover:text-white transition">Contact Us</Link></li>
                 <li><a href="#" className="hover:text-white transition">Shipping Policy</a></li>
                 <li><a href="#" className="hover:text-white transition">Returns</a></li>
               </ul>
