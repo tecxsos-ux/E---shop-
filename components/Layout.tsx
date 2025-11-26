@@ -24,9 +24,26 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   ];
 
   const currentLang = languages.find(l => l.code === language);
+  const { settings } = state;
 
   return (
     <div className="min-h-screen flex flex-col">
+      {/* Dynamic Theme Styles */}
+      <style>
+        {`
+          .text-indigo-600 { color: ${settings.primaryColor} !important; }
+          .bg-indigo-600 { background-color: ${settings.primaryColor} !important; }
+          .bg-indigo-700 { background-color: ${settings.primaryColor} !important; filter: brightness(0.9); }
+          .hover\\:bg-indigo-700:hover { background-color: ${settings.primaryColor} !important; filter: brightness(0.85); }
+          .hover\\:text-indigo-600:hover { color: ${settings.primaryColor} !important; }
+          .border-indigo-600 { border-color: ${settings.primaryColor} !important; }
+          .ring-indigo-500 { --tw-ring-color: ${settings.primaryColor} !important; }
+          .hover\\:bg-indigo-50:hover { background-color: ${settings.primaryColor}10 !important; }
+          .bg-indigo-50 { background-color: ${settings.primaryColor}10 !important; }
+          .text-indigo-700 { color: ${settings.primaryColor} !important; filter: brightness(0.7); }
+        `}
+      </style>
+
       {/* Navigation */}
       <nav className="bg-white sticky top-0 z-50 border-b border-gray-100 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -34,8 +51,12 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             
             {/* Logo */}
             <div className="flex-shrink-0 flex items-center">
-              <Link to="/" className="text-2xl font-bold tracking-tighter text-gray-900">
-                Luxe<span className="text-indigo-600">Market</span>
+              <Link to="/" className="flex items-center gap-2 text-2xl font-bold tracking-tighter text-gray-900">
+                {settings.brandLogo ? (
+                   <img src={settings.brandLogo} alt={settings.brandName} className="h-8 w-auto object-contain" />
+                ) : (
+                   <>Luxe<span className="text-indigo-600">Market</span></>
+                )}
               </Link>
             </div>
 
@@ -229,7 +250,13 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div className="col-span-1 md:col-span-2">
-              <h3 className="text-2xl font-bold mb-4">Luxe<span className="text-indigo-500">Market</span></h3>
+              <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                  {settings.brandLogo ? (
+                     <img src={settings.brandLogo} alt={settings.brandName} className="h-8 w-auto grayscale brightness-200" />
+                  ) : (
+                     <>Luxe<span className="text-indigo-600">Market</span></>
+                  )}
+              </h3>
               <p className="text-gray-400 max-w-sm">
                 {t('nav.footerDesc')}
               </p>
@@ -253,7 +280,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             </div>
           </div>
           <div className="border-t border-gray-800 pt-8 text-center text-gray-500 text-sm">
-            &copy; 2024 LuxeMarket AI. {t('nav.rights')}
+            &copy; 2024 {settings.brandName}. {t('nav.rights')}
           </div>
         </div>
       </footer>

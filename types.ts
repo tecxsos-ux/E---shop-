@@ -1,3 +1,4 @@
+
 export interface Product {
   id: string;
   name: string;
@@ -62,6 +63,7 @@ export interface Category {
   id: string;
   name: string;
   subCategories: string[];
+  image?: string;
 }
 
 export interface Slide {
@@ -72,4 +74,19 @@ export interface Slide {
   image: string;
   link: string;
   color: string;
+}
+
+export interface Banner {
+  id: string;
+  title: string;
+  subtitle: string;
+  image: string;
+  link: string;
+  buttonText: string;
+}
+
+export interface Settings {
+  brandName: string;
+  brandLogo: string;
+  primaryColor: string;
 }

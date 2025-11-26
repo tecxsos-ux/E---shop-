@@ -1,5 +1,6 @@
+
 import React, { createContext, useReducer, useEffect } from 'react';
-import { Product, CartItem, User, Order, Category, OrderStatus, Slide } from '../types';
+import { Product, CartItem, User, Order, Category, OrderStatus, Slide, Banner, Settings } from '../types';
 
 interface State {
   products: Product[];
@@ -8,11 +9,13 @@ interface State {
   user: User | null;
   orders: Order[];
   slides: Slide[];
+  banners: Banner[];
   filters: {
     category: string | null;
     subCategory: string | null;
     search: string;
   };
+  settings: Settings;
 }
 
 const initialProducts: Product[] = [
@@ -74,9 +77,9 @@ const initialProducts: Product[] = [
 ];
 
 const initialCategories: Category[] = [
-  { id: '1', name: 'Electronics', subCategories: ['Audio', 'Home', 'Mobile'] },
-  { id: '2', name: 'Clothing', subCategories: ['Outerwear', 'T-Shirts', 'Pants'] },
-  { id: '3', name: 'Accessories', subCategories: ['Watches', 'Bags', 'Jewelry'] },
+  { id: '1', name: 'Electronics', subCategories: ['Audio', 'Home', 'Mobile'], image: 'https://picsum.photos/600/800?random=10' },
+  { id: '2', name: 'Clothing', subCategories: ['Outerwear', 'T-Shirts', 'Pants'], image: 'https://picsum.photos/600/800?random=11' },
+  { id: '3', name: 'Accessories', subCategories: ['Watches', 'Bags', 'Jewelry'], image: 'https://picsum.photos/600/800?random=12' },
 ];
 
 const initialSlides: Slide[] = [
@@ -109,11 +112,30 @@ const initialSlides: Slide[] = [
   }
 ];
 
+const initialBanners: Banner[] = [
+  {
+    id: "banner1",
+    title: "Streetwear",
+    subtitle: "TRENDING",
+    image: "https://picsum.photos/600/800?random=201",
+    link: "/shop?category=Clothing",
+    buttonText: "Browse Collection"
+  },
+  {
+    id: "banner2",
+    title: "Audio Gear",
+    subtitle: "BEST SELLERS",
+    image: "https://picsum.photos/600/800?random=202",
+    link: "/shop?category=Electronics",
+    buttonText: "Shop Now"
+  }
+];
+
 const initialState: State = {
   products: initialProducts,
   categories: initialCategories,
   cart: [],
-  user: { id: 'u1', name: 'Admin User', email: 'admin@luxe.com', role: 'admin' }, // Defaulting to Admin for demo
+  user: { id: 'u1', name: 'Admin User', email: 'admin@luxe.com', role: 'admin' },
   orders: [
     {
        id: 'ORD-1001',
@@ -126,10 +148,16 @@ const initialState: State = {
     }
   ],
   slides: initialSlides,
+  banners: initialBanners,
   filters: {
     category: null,
     subCategory: null,
     search: '',
+  },
+  settings: {
+    brandName: 'LuxeMarket',
+    brandLogo: '',
+    primaryColor: '#4f46e5' // Default Indigo-600 hex
   }
 };
 
@@ -147,7 +175,11 @@ type Action =
   | { type: 'SET_FILTER_SUBCATEGORY'; payload: string | null }
   | { type: 'ADD_SLIDE'; payload: Slide }
   | { type: 'UPDATE_SLIDE'; payload: Slide }
-  | { type: 'DELETE_SLIDE'; payload: string };
+  | { type: 'DELETE_SLIDE'; payload: string }
+  | { type: 'ADD_CATEGORY'; payload: Category }
+  | { type: 'DELETE_CATEGORY'; payload: string }
+  | { type: 'UPDATE_BANNER'; payload: Banner }
+  | { type: 'UPDATE_SETTINGS'; payload: Settings };
 
 const storeReducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -218,6 +250,14 @@ const storeReducer = (state: State, action: Action): State => {
       return { ...state, slides: state.slides.map(s => s.id === action.payload.id ? action.payload : s) };
     case 'DELETE_SLIDE':
       return { ...state, slides: state.slides.filter(s => s.id !== action.payload) };
+    case 'ADD_CATEGORY':
+      return { ...state, categories: [...state.categories, action.payload] };
+    case 'DELETE_CATEGORY':
+      return { ...state, categories: state.categories.filter(c => c.id !== action.payload) };
+    case 'UPDATE_BANNER':
+      return { ...state, banners: state.banners.map(b => b.id === action.payload.id ? action.payload : b) };
+    case 'UPDATE_SETTINGS':
+      return { ...state, settings: action.payload };
     default:
       return state;
   }

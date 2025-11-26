@@ -13,6 +13,7 @@ const Home: React.FC = () => {
   
   // Use slides from global state
   const slides = state.slides;
+  const banners = state.banners;
 
   // Carousel State
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -105,31 +106,19 @@ const Home: React.FC = () => {
           {/* Right Side Banners - Spans 1 column */}
           <div className="lg:col-span-1 flex flex-col gap-6 h-auto lg:h-[550px]">
              
-             {/* Banner Top */}
-             <Link to="/shop?category=Clothing" className="flex-1 relative rounded-2xl overflow-hidden shadow-lg group h-[260px] lg:h-auto">
-                <img src="https://picsum.photos/600/800?random=201" alt="Men's Fashion" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-                <div className="absolute bottom-0 left-0 p-6 w-full">
-                   <span className="text-xs font-bold text-indigo-300 uppercase tracking-wider mb-1 block">{t('home.trending')}</span>
-                   <h3 className="text-2xl font-bold text-white mb-2">Streetwear</h3>
-                   <span className="text-sm font-medium text-white group-hover:underline flex items-center gap-1">
-                      {t('home.browseCollection')} <ArrowRight size={14} />
-                   </span>
-                </div>
-             </Link>
-
-             {/* Banner Bottom */}
-             <Link to="/shop?category=Electronics" className="flex-1 relative rounded-2xl overflow-hidden shadow-lg group h-[260px] lg:h-auto">
-                <img src="https://picsum.photos/600/800?random=202" alt="Accessories" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-                <div className="absolute bottom-0 left-0 p-6 w-full">
-                   <span className="text-xs font-bold text-indigo-300 uppercase tracking-wider mb-1 block">{t('home.bestSellers')}</span>
-                   <h3 className="text-2xl font-bold text-white mb-2">Audio Gear</h3>
-                   <span className="text-sm font-medium text-white group-hover:underline flex items-center gap-1">
-                      {t('home.shopNow')} <ArrowRight size={14} />
-                   </span>
-                </div>
-             </Link>
+             {banners.map(banner => (
+                <Link key={banner.id} to={banner.link} className="flex-1 relative rounded-2xl overflow-hidden shadow-lg group h-[260px] lg:h-auto">
+                    <img src={banner.image} alt={banner.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                    <div className="absolute bottom-0 left-0 p-6 w-full">
+                      <span className="text-xs font-bold text-indigo-300 uppercase tracking-wider mb-1 block">{banner.subtitle}</span>
+                      <h3 className="text-2xl font-bold text-white mb-2">{banner.title}</h3>
+                      <span className="text-sm font-medium text-white group-hover:underline flex items-center gap-1">
+                          {banner.buttonText} <ArrowRight size={14} />
+                      </span>
+                    </div>
+                </Link>
+             ))}
 
           </div>
         </div>
@@ -167,7 +156,7 @@ const Home: React.FC = () => {
          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {state.categories.map((cat, idx) => (
               <div key={cat.id} className="group relative h-80 rounded-2xl overflow-hidden cursor-pointer shadow-lg">
-                 <img src={`https://picsum.photos/600/800?random=${10+idx}`} alt={cat.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                 <img src={cat.image || `https://picsum.photos/600/800?random=${10+idx}`} alt={cat.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-8">
                     <h3 className="text-2xl font-bold text-white transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">{cat.name}</h3>
                     <div className="h-0 group-hover:h-6 overflow-hidden transition-all duration-300">

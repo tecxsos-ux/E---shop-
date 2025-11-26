@@ -2,8 +2,9 @@
 import React, { useContext, useState } from 'react';
 import { StoreContext } from '../context/StoreContext';
 import { Link } from 'react-router-dom';
-import { Filter, ShoppingBag, Star, Heart } from 'lucide-react';
+import { Filter, ShoppingBag, Star, Heart, X, ShoppingCart } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { Product } from '../types';
 
 const Shop: React.FC = () => {
   const { state, dispatch } = useContext(StoreContext);
@@ -18,8 +19,107 @@ const Shop: React.FC = () => {
     return true;
   });
 
+  const handleQuickAdd = (e: React.MouseEvent, product: Product) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Auto-select first available options for quick add to prevent errors
+    const defaultColor = product.variants?.find(v => v.type === 'color')?.options[0];
+    const defaultSize = product.variants?.find(v => v.type === 'size')?.options[0];
+
+    dispatch({
+      type: 'ADD_TO_CART',
+      payload: {
+        ...product,
+        quantity: 1,
+        selectedColor: defaultColor,
+        selectedSize: defaultSize,
+      }
+    });
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Mobile Filter Dialog */}
+      {mobileFiltersOpen && (
+        <div className="relative z-50 lg:hidden" role="dialog" aria-modal="true">
+          <div className="fixed inset-0 bg-black/25 backdrop-blur-sm transition-opacity" onClick={() => setMobileFiltersOpen(false)}></div>
+
+          <div className="fixed inset-0 z-40 flex">
+            <div className="relative ml-auto flex h-full w-full max-w-xs flex-col overflow-y-auto bg-white py-4 pb-12 shadow-xl animate-fade-in-up">
+              <div className="flex items-center justify-between px-4">
+                <h2 className="text-lg font-medium text-gray-900">{t('shop.filters')}</h2>
+                <button
+                  type="button"
+                  className="-mr-2 flex h-10 w-10 items-center justify-center rounded-md bg-white p-2 text-gray-400"
+                  onClick={() => setMobileFiltersOpen(false)}
+                >
+                  <span className="sr-only">Close menu</span>
+                  <X className="h-6 w-6" aria-hidden="true" />
+                </button>
+              </div>
+
+              {/* Mobile Filters Form */}
+              <form className="mt-4 border-t border-gray-200">
+                  <div className="px-4 py-6">
+                    <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-6">{t('shop.categories')}</h3>
+                    <ul className="space-y-3 text-sm">
+                      <li>
+                        <button 
+                          type="button" 
+                          onClick={() => {
+                              dispatch({type: 'SET_FILTER_CATEGORY', payload: null});
+                              setMobileFiltersOpen(false);
+                          }}
+                          className={`flex items-center w-full px-3 py-2 rounded-lg transition-all ${state.filters.category === null ? 'bg-indigo-50 text-indigo-700 font-bold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'}`}
+                        >
+                          {t('shop.allProducts')}
+                        </button>
+                      </li>
+                      {state.categories.map((category) => (
+                        <li key={category.id}>
+                          <button 
+                            type="button" 
+                            onClick={() => {
+                                dispatch({type: 'SET_FILTER_CATEGORY', payload: category.name});
+                                setMobileFiltersOpen(false);
+                            }}
+                            className={`flex items-center w-full px-3 py-2 rounded-lg transition-all ${state.filters.category === category.name ? 'bg-indigo-50 text-indigo-700 font-bold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'}`}
+                          >
+                            {category.name}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {state.filters.category && (
+                    <div className="px-4 py-6 border-t border-gray-200">
+                      <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-6">{t('shop.subCategories')}</h3>
+                      <ul className="space-y-3 text-sm">
+                        {state.categories.find(c => c.name === state.filters.category)?.subCategories.map((sub) => (
+                            <li key={sub}>
+                              <button 
+                                  type="button" 
+                                  onClick={() => {
+                                      dispatch({type: 'SET_FILTER_SUBCATEGORY', payload: sub});
+                                      setMobileFiltersOpen(false);
+                                  }}
+                                  className={`flex items-center w-full px-3 py-2 rounded-lg transition-all ${state.filters.subCategory === sub ? 'bg-indigo-50 text-indigo-700 font-bold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'}`}
+                                >
+                                  {sub}
+                                </button>
+                            </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex items-end justify-between border-b border-gray-200 pb-6 pt-24 md:pt-6 mb-8">
         <div>
            <span className="text-indigo-600 font-semibold tracking-wider uppercase text-xs">{t('shop.curated')}</span>
@@ -33,7 +133,7 @@ const Shop: React.FC = () => {
           <button 
             type="button" 
             className="p-2 text-gray-600 hover:text-indigo-600 lg:hidden border rounded-lg"
-            onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
+            onClick={() => setMobileFiltersOpen(true)}
           >
             <span className="sr-only">{t('shop.filters')}</span>
             <Filter className="w-5 h-5" />
@@ -112,11 +212,11 @@ const Shop: React.FC = () => {
              ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                   {filteredProducts.map((product) => (
-                    <Link key={product.id} to={`/product/${product.id}`} className="group relative bg-white rounded-2xl shadow-md hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-300 hover:-translate-y-2 flex flex-col overflow-hidden border border-gray-100">
+                    <Link key={product.id} to={`/product/${product.id}`} className="group relative bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden border border-gray-100">
                       
                       {/* Image Container */}
                       <div className="relative h-72 overflow-hidden bg-gray-100">
-                        <img src={product.image} alt={product.name} className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700" />
+                        <img src={product.image} alt={product.name} className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500" />
                         
                         {/* Favorite Button */}
                         <button className="absolute top-3 right-3 p-2 bg-white/80 backdrop-blur rounded-full text-gray-400 hover:text-red-500 hover:bg-white transition-all shadow-sm z-10 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0">
@@ -137,10 +237,13 @@ const Shop: React.FC = () => {
                             )}
                         </div>
 
-                        {/* Quick View Button */}
+                        {/* Quick Add To Cart Button */}
                         <div className="absolute bottom-4 left-4 right-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                           <button className="w-full bg-white/95 backdrop-blur text-gray-900 py-3 rounded-xl shadow-lg font-bold text-sm hover:bg-white transition-colors">
-                               {t('shop.viewDetails')}
+                           <button 
+                               onClick={(e) => handleQuickAdd(e, product)}
+                               className="w-full bg-white/95 backdrop-blur text-gray-900 py-3 rounded-xl shadow-lg font-bold text-sm hover:bg-indigo-600 hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
+                           >
+                               <ShoppingCart size={16} /> {t('product.addToCart')}
                            </button>
                         </div>
                       </div>
@@ -170,10 +273,6 @@ const Shop: React.FC = () => {
                                 <span className="text-xl font-bold text-gray-900">${product.price}</span>
                              )}
                           </div>
-                          
-                          <button className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-50 text-gray-600 group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-sm hover:shadow-md">
-                             <ShoppingBag size={18} />
-                          </button>
                         </div>
                       </div>
                     </Link>

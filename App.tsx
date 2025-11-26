@@ -16,6 +16,8 @@ import AdminDashboard from './pages/admin/Dashboard';
 import AdminProducts from './pages/admin/Products';
 import AdminOrders from './pages/admin/Orders';
 import AdminSliderSettings from './pages/admin/SliderSettings';
+import AdminCategories from './pages/admin/Categories';
+import AdminSettings from './pages/admin/Settings';
 
 const App: React.FC = () => {
   return (
@@ -34,8 +36,10 @@ const App: React.FC = () => {
               {/* Admin Routes */}
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/admin/products" element={<AdminProducts />} />
+              <Route path="/admin/categories" element={<AdminCategories />} />
               <Route path="/admin/orders" element={<AdminOrders />} />
               <Route path="/admin/slider" element={<AdminSliderSettings />} />
+              <Route path="/admin/settings" element={<AdminSettings />} />
               
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
