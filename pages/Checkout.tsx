@@ -1,11 +1,14 @@
+
 import React, { useContext, useState } from 'react';
 import { StoreContext } from '../context/StoreContext';
 import { useNavigate } from 'react-router-dom';
 import { OrderStatus } from '../types';
 import { CreditCard, CheckCircle, Loader } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 const Checkout: React.FC = () => {
   const { state, dispatch } = useContext(StoreContext);
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -63,8 +66,8 @@ const Checkout: React.FC = () => {
   if (state.cart.length === 0 && !success) {
       return (
           <div className="max-w-7xl mx-auto px-4 py-24 text-center">
-              <h2 className="text-2xl font-bold">Your cart is empty</h2>
-              <button onClick={() => navigate('/shop')} className="mt-4 text-indigo-600 hover:underline">Go Shopping</button>
+              <h2 className="text-2xl font-bold">{t('checkout.empty')}</h2>
+              <button onClick={() => navigate('/shop')} className="mt-4 text-indigo-600 hover:underline">{t('checkout.goShopping')}</button>
           </div>
       )
   }
@@ -75,26 +78,26 @@ const Checkout: React.FC = () => {
         <div className="bg-green-50 p-6 rounded-full mb-6 animate-bounce">
             <CheckCircle className="w-16 h-16 text-green-500" />
         </div>
-        <h2 className="text-3xl font-bold text-gray-900">Payment Successful!</h2>
-        <p className="text-gray-500 mt-2">Redirecting to your order history...</p>
+        <h2 className="text-3xl font-bold text-gray-900">{t('checkout.success')}</h2>
+        <p className="text-gray-500 mt-2">{t('checkout.redirecting')}</p>
       </div>
     );
   }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <h1 className="text-3xl font-bold mb-8">Checkout</h1>
+      <h1 className="text-3xl font-bold mb-8">{t('checkout.title')}</h1>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         
         {/* Checkout Form */}
         <form onSubmit={handlePayment} className="space-y-6">
            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-              <h2 className="text-xl font-semibold mb-4">Shipping Information</h2>
+              <h2 className="text-xl font-semibold mb-4">{t('checkout.shippingInfo')}</h2>
               <div className="space-y-4">
                  <input 
                    required 
                    name="line1" 
-                   placeholder="Address Line 1" 
+                   placeholder={t('checkout.addressLine1')}
                    onChange={handleInputChange} 
                    className="w-full p-3 border border-gray-300 rounded-md text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent placeholder-gray-400" 
                  />
@@ -102,14 +105,14 @@ const Checkout: React.FC = () => {
                     <input 
                       required 
                       name="city" 
-                      placeholder="City" 
+                      placeholder={t('checkout.city')}
                       onChange={handleInputChange} 
                       className="w-full p-3 border border-gray-300 rounded-md text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent placeholder-gray-400" 
                     />
                     <input 
                       required 
                       name="postalCode" 
-                      placeholder="Postal Code" 
+                      placeholder={t('checkout.postalCode')}
                       onChange={handleInputChange} 
                       className="w-full p-3 border border-gray-300 rounded-md text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent placeholder-gray-400" 
                     />
@@ -122,26 +125,29 @@ const Checkout: React.FC = () => {
                     <option value="US">United States</option>
                     <option value="CA">Canada</option>
                     <option value="UK">United Kingdom</option>
+                    <option value="FR">France</option>
+                    <option value="DE">Germany</option>
+                    <option value="IT">Italy</option>
                  </select>
               </div>
            </div>
 
            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
               <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                  <CreditCard className="w-5 h-5" /> Payment Details (Stripe Mock)
+                  <CreditCard className="w-5 h-5" /> {t('checkout.paymentDetails')}
               </h2>
               <div className="space-y-4">
                  <input 
                    required 
                    name="cardName" 
-                   placeholder="Name on Card" 
+                   placeholder={t('checkout.nameOnCard')}
                    onChange={handleInputChange} 
                    className="w-full p-3 border border-gray-300 rounded-md text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent placeholder-gray-400" 
                  />
                  <input 
                    required 
                    name="cardNumber" 
-                   placeholder="Card Number" 
+                   placeholder={t('checkout.cardNumber')}
                    maxLength={16} 
                    onChange={handleInputChange} 
                    className="w-full p-3 border border-gray-300 rounded-md text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent placeholder-gray-400" 
@@ -172,13 +178,13 @@ const Checkout: React.FC = () => {
              disabled={loading}
              className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition flex justify-center items-center gap-2 disabled:opacity-70"
            >
-             {loading ? <><Loader className="animate-spin" /> Processing...</> : `Pay $${total.toFixed(2)}`}
+             {loading ? <><Loader className="animate-spin" /> {t('checkout.processing')}</> : `${t('checkout.pay')} $${total.toFixed(2)}`}
            </button>
         </form>
 
         {/* Order Summary */}
         <div className="bg-gray-50 p-8 rounded-xl h-fit">
-           <h2 className="text-xl font-semibold mb-6">Order Summary</h2>
+           <h2 className="text-xl font-semibold mb-6">{t('checkout.orderSummary')}</h2>
            <ul className="space-y-4 mb-6">
              {state.cart.map(item => (
                 <li key={`${item.id}-${item.selectedSize}`} className="flex justify-between items-center">
@@ -197,15 +203,15 @@ const Checkout: React.FC = () => {
            </ul>
            <div className="border-t border-gray-200 pt-4 space-y-2">
               <div className="flex justify-between">
-                 <p className="text-gray-600">Subtotal</p>
+                 <p className="text-gray-600">{t('nav.subtotal')}</p>
                  <p>${total.toFixed(2)}</p>
               </div>
               <div className="flex justify-between">
-                 <p className="text-gray-600">Shipping</p>
-                 <p>Free</p>
+                 <p className="text-gray-600">{t('checkout.shipping')}</p>
+                 <p>{t('checkout.free')}</p>
               </div>
               <div className="flex justify-between text-xl font-bold text-gray-900 pt-2 border-t">
-                 <p>Total</p>
+                 <p>{t('checkout.total')}</p>
                  <p>${total.toFixed(2)}</p>
               </div>
            </div>

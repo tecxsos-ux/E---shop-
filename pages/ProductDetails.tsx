@@ -1,11 +1,14 @@
+
 import React, { useContext, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { StoreContext } from '../context/StoreContext';
 import { Star, Truck, Shield, RotateCcw } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { state, dispatch } = useContext(StoreContext);
+  const { t } = useLanguage();
   const product = state.products.find(p => p.id === id);
 
   const [selectedSize, setSelectedSize] = useState<string>('');
@@ -13,7 +16,7 @@ const ProductDetails: React.FC = () => {
   const [mainImage, setMainImage] = useState<string>(product?.image || '');
 
   if (!product) {
-    return <div className="p-10 text-center">Product not found. <Link to="/shop" className="text-indigo-600">Go Back</Link></div>;
+    return <div className="p-10 text-center">{t('product.notFound')} <Link to="/shop" className="text-indigo-600">{t('product.goBack')}</Link></div>;
   }
 
   // Determine variants available
@@ -22,11 +25,11 @@ const ProductDetails: React.FC = () => {
 
   const handleAddToCart = () => {
     if (sizeVariant && !selectedSize) {
-      alert("Please select a size");
+      alert(t('product.selectSize'));
       return;
     }
     if (colorVariant && !selectedColor) {
-      alert("Please select a color");
+      alert(t('product.selectColor'));
       return;
     }
     
@@ -39,7 +42,7 @@ const ProductDetails: React.FC = () => {
         selectedSize: selectedSize || undefined,
       }
     });
-    alert("Added to cart!");
+    alert(t('product.addedToCart'));
   };
 
   return (
@@ -67,7 +70,7 @@ const ProductDetails: React.FC = () => {
         <div>
           <div className="mb-2 flex items-center gap-2">
              <span className="bg-indigo-100 text-indigo-700 text-xs px-2 py-1 rounded-full font-bold uppercase">{product.category}</span>
-             {product.isNew && <span className="bg-gray-900 text-white text-xs px-2 py-1 rounded-full font-bold uppercase">New Arrival</span>}
+             {product.isNew && <span className="bg-gray-900 text-white text-xs px-2 py-1 rounded-full font-bold uppercase">{t('home.newArrivals')}</span>}
           </div>
           <h1 className="text-3xl font-bold text-gray-900">{product.name}</h1>
           <div className="flex items-center gap-1 mt-2 text-yellow-500">
@@ -76,7 +79,7 @@ const ProductDetails: React.FC = () => {
              <Star className="w-4 h-4 fill-current" />
              <Star className="w-4 h-4 fill-current" />
              <Star className="w-4 h-4 fill-current" />
-             <span className="text-gray-400 text-sm ml-2">(128 Reviews)</span>
+             <span className="text-gray-400 text-sm ml-2">(128 {t('product.reviews')})</span>
           </div>
           <p className="text-2xl font-semibold text-gray-900 mt-4">${product.price}</p>
           
@@ -87,7 +90,7 @@ const ProductDetails: React.FC = () => {
           <div className="mt-8 space-y-6">
             {sizeVariant && (
               <div>
-                <h3 className="text-sm font-medium text-gray-900">Size</h3>
+                <h3 className="text-sm font-medium text-gray-900">{t('product.size')}</h3>
                 <div className="flex gap-2 mt-2">
                   {sizeVariant.options.map(opt => (
                     <button
@@ -104,7 +107,7 @@ const ProductDetails: React.FC = () => {
 
             {colorVariant && (
               <div>
-                <h3 className="text-sm font-medium text-gray-900">Color</h3>
+                <h3 className="text-sm font-medium text-gray-900">{t('product.color')}</h3>
                 <div className="flex gap-2 mt-2">
                   {colorVariant.options.map(opt => (
                     <button
@@ -123,21 +126,21 @@ const ProductDetails: React.FC = () => {
               onClick={handleAddToCart}
               className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition"
             >
-              Add to Cart
+              {t('product.addToCart')}
             </button>
             
             <div className="grid grid-cols-3 gap-4 text-center mt-8">
                <div className="flex flex-col items-center gap-2">
                   <div className="p-2 bg-gray-100 rounded-full text-gray-600"><Truck size={20} /></div>
-                  <span className="text-xs text-gray-500">Fast Delivery</span>
+                  <span className="text-xs text-gray-500">{t('product.fastDelivery')}</span>
                </div>
                <div className="flex flex-col items-center gap-2">
                   <div className="p-2 bg-gray-100 rounded-full text-gray-600"><RotateCcw size={20} /></div>
-                  <span className="text-xs text-gray-500">Free Returns</span>
+                  <span className="text-xs text-gray-500">{t('product.freeReturns')}</span>
                </div>
                <div className="flex flex-col items-center gap-2">
                   <div className="p-2 bg-gray-100 rounded-full text-gray-600"><Shield size={20} /></div>
-                  <span className="text-xs text-gray-500">2 Year Warranty</span>
+                  <span className="text-xs text-gray-500">{t('product.warranty')}</span>
                </div>
             </div>
           </div>

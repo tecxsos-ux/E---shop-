@@ -1,7 +1,10 @@
+
 import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Send, Clock, CheckCircle } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 const Contact: React.FC = () => {
+  const { t } = useLanguage();
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -24,11 +27,10 @@ const Contact: React.FC = () => {
       {/* Header */}
       <div className="bg-white border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-            <span className="text-indigo-600 font-bold tracking-wider uppercase text-xs mb-2 block">We'd love to hear from you</span>
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">Get in Touch</h1>
+            <span className="text-indigo-600 font-bold tracking-wider uppercase text-xs mb-2 block">{t('contact.subtitle')}</span>
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">{t('contact.header')}</h1>
             <p className="text-gray-500 max-w-2xl mx-auto text-lg">
-                Have a question about our products, shipping, or just want to say hello? 
-                Our team is ready to answer all your questions.
+                {t('contact.desc')}
             </p>
         </div>
       </div>
@@ -39,7 +41,7 @@ const Contact: React.FC = () => {
           {/* Contact Information */}
           <div className="lg:col-span-1 space-y-8">
              <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 h-full">
-                <h3 className="text-xl font-bold text-gray-900 mb-6">Contact Information</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-6">{t('contact.infoTitle')}</h3>
                 
                 <div className="space-y-6">
                     <div className="flex items-start gap-4">
@@ -47,7 +49,7 @@ const Contact: React.FC = () => {
                             <Mail size={20} />
                         </div>
                         <div>
-                            <p className="text-sm font-semibold text-gray-900">Email Us</p>
+                            <p className="text-sm font-semibold text-gray-900">{t('contact.emailUs')}</p>
                             <p className="text-gray-600">support@luxemarket.ai</p>
                             <p className="text-gray-600">info@luxemarket.ai</p>
                         </div>
@@ -58,7 +60,7 @@ const Contact: React.FC = () => {
                             <Phone size={20} />
                         </div>
                         <div>
-                            <p className="text-sm font-semibold text-gray-900">Call Us</p>
+                            <p className="text-sm font-semibold text-gray-900">{t('contact.callUs')}</p>
                             <p className="text-gray-600">+1 (555) 123-4567</p>
                             <p className="text-xs text-gray-500 mt-1">Mon-Fri from 8am to 5pm</p>
                         </div>
@@ -69,7 +71,7 @@ const Contact: React.FC = () => {
                             <MapPin size={20} />
                         </div>
                         <div>
-                            <p className="text-sm font-semibold text-gray-900">Visit Us</p>
+                            <p className="text-sm font-semibold text-gray-900">{t('contact.visitUs')}</p>
                             <p className="text-gray-600">
                                 123 Luxury Lane, Suite 100<br/>
                                 Beverly Hills, CA 90210
@@ -82,7 +84,7 @@ const Contact: React.FC = () => {
                             <Clock size={20} />
                         </div>
                         <div>
-                            <p className="text-sm font-semibold text-gray-900">Business Hours</p>
+                            <p className="text-sm font-semibold text-gray-900">{t('contact.hours')}</p>
                             <div className="text-gray-600 text-sm grid grid-cols-2 gap-x-4">
                                 <span>Mon - Fri:</span> <span>9:00 AM - 6:00 PM</span>
                                 <span>Saturday:</span> <span>10:00 AM - 4:00 PM</span>
@@ -102,22 +104,22 @@ const Contact: React.FC = () => {
                         <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center text-green-600 mb-4">
                             <CheckCircle size={32} />
                         </div>
-                        <h3 className="text-2xl font-bold text-gray-900">Message Sent!</h3>
-                        <p className="text-gray-500 mt-2">Thank you for contacting us. We will get back to you shortly.</p>
+                        <h3 className="text-2xl font-bold text-gray-900">{t('contact.successTitle')}</h3>
+                        <p className="text-gray-500 mt-2">{t('contact.successDesc')}</p>
                         <button 
                             onClick={() => setIsSubmitted(false)}
                             className="mt-6 text-indigo-600 font-medium hover:underline"
                         >
-                            Send another message
+                            {t('contact.sendAnother')}
                         </button>
                     </div>
                 ) : (
                     <>
-                        <h3 className="text-xl font-bold text-gray-900 mb-6">Send us a Message</h3>
+                        <h3 className="text-xl font-bold text-gray-900 mb-6">{t('contact.sendMessage')}</h3>
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+                                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">{t('contact.name')}</label>
                                     <input 
                                         type="text" 
                                         id="name" 
@@ -130,7 +132,7 @@ const Contact: React.FC = () => {
                                     />
                                 </div>
                                 <div>
-                                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">{t('contact.email')}</label>
                                     <input 
                                         type="email" 
                                         id="email" 
@@ -145,7 +147,7 @@ const Contact: React.FC = () => {
                             </div>
                             
                             <div>
-                                <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+                                <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">{t('contact.subject')}</label>
                                 <input 
                                     type="text" 
                                     id="subject" 
@@ -159,7 +161,7 @@ const Contact: React.FC = () => {
                             </div>
 
                             <div>
-                                <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                                <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">{t('contact.message')}</label>
                                 <textarea 
                                     id="message" 
                                     name="message" 
@@ -176,7 +178,7 @@ const Contact: React.FC = () => {
                                 type="submit" 
                                 className="w-full sm:w-auto bg-indigo-600 text-white px-8 py-4 rounded-xl font-bold shadow-lg shadow-indigo-200 hover:bg-indigo-700 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2"
                             >
-                                <Send size={18} /> Send Message
+                                <Send size={18} /> {t('contact.sendBtn')}
                             </button>
                         </form>
                     </>

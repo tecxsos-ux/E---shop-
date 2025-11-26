@@ -1,10 +1,13 @@
+
 import React, { useContext, useState, useEffect } from 'react';
 import { StoreContext } from '../context/StoreContext';
+import { useLanguage } from '../context/LanguageContext';
 import { ArrowRight, ShoppingBag, ShieldCheck, Truck, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Home: React.FC = () => {
   const { state } = useContext(StoreContext);
+  const { t } = useLanguage();
   const newArrivals = state.products.filter(p => p.isNew).slice(0, 4);
   const todayOffers = state.products.filter(p => p.discount).slice(0, 4);
   
@@ -53,7 +56,7 @@ const Home: React.FC = () => {
                     {/* Content */}
                     <div className="absolute inset-0 flex flex-col justify-center items-start p-8 md:p-16 text-white max-w-2xl">
                        <span className="inline-block py-1 px-3 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white font-semibold tracking-wider uppercase text-xs mb-4 animate-fade-in-up">
-                          Featured Collection
+                          {t('home.featured')}
                        </span>
                        <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-4 drop-shadow-lg animate-fade-in-up delay-100">
                          {slide.title}
@@ -65,7 +68,7 @@ const Home: React.FC = () => {
                          to={slide.link} 
                          className="bg-white text-gray-900 px-8 py-3 rounded-full font-bold transition-all hover:bg-indigo-50 hover:shadow-lg hover:scale-105 flex items-center gap-2 animate-fade-in-up delay-300"
                        >
-                         Shop Now <ArrowRight className="w-5 h-5" />
+                         {t('home.shopNow')} <ArrowRight className="w-5 h-5" />
                        </Link>
                     </div>
                   </div>
@@ -107,10 +110,10 @@ const Home: React.FC = () => {
                 <img src="https://picsum.photos/600/800?random=201" alt="Men's Fashion" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
                 <div className="absolute bottom-0 left-0 p-6 w-full">
-                   <span className="text-xs font-bold text-indigo-300 uppercase tracking-wider mb-1 block">Trending</span>
+                   <span className="text-xs font-bold text-indigo-300 uppercase tracking-wider mb-1 block">{t('home.trending')}</span>
                    <h3 className="text-2xl font-bold text-white mb-2">Streetwear</h3>
                    <span className="text-sm font-medium text-white group-hover:underline flex items-center gap-1">
-                      Browse Collection <ArrowRight size={14} />
+                      {t('home.browseCollection')} <ArrowRight size={14} />
                    </span>
                 </div>
              </Link>
@@ -120,10 +123,10 @@ const Home: React.FC = () => {
                 <img src="https://picsum.photos/600/800?random=202" alt="Accessories" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
                 <div className="absolute bottom-0 left-0 p-6 w-full">
-                   <span className="text-xs font-bold text-indigo-300 uppercase tracking-wider mb-1 block">Best Sellers</span>
+                   <span className="text-xs font-bold text-indigo-300 uppercase tracking-wider mb-1 block">{t('home.bestSellers')}</span>
                    <h3 className="text-2xl font-bold text-white mb-2">Audio Gear</h3>
                    <span className="text-sm font-medium text-white group-hover:underline flex items-center gap-1">
-                      Shop Now <ArrowRight size={14} />
+                      {t('home.shopNow')} <ArrowRight size={14} />
                    </span>
                 </div>
              </Link>
@@ -137,15 +140,15 @@ const Home: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
            <div className="flex items-center gap-4 p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
              <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl"><Truck size={24} /></div>
-             <div><h3 className="font-bold text-gray-900">Free Shipping</h3><p className="text-xs text-gray-500 mt-1">On orders over $200</p></div>
+             <div><h3 className="font-bold text-gray-900">{t('home.freeShipping')}</h3><p className="text-xs text-gray-500 mt-1">{t('home.freeShippingDesc')}</p></div>
            </div>
            <div className="flex items-center gap-4 p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
              <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl"><ShieldCheck size={24} /></div>
-             <div><h3 className="font-bold text-gray-900">Secure Payment</h3><p className="text-xs text-gray-500 mt-1">100% secure checkout</p></div>
+             <div><h3 className="font-bold text-gray-900">{t('home.securePayment')}</h3><p className="text-xs text-gray-500 mt-1">{t('home.securePaymentDesc')}</p></div>
            </div>
            <div className="flex items-center gap-4 p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
              <div className="p-3 bg-purple-50 text-purple-600 rounded-xl"><ShoppingBag size={24} /></div>
-             <div><h3 className="font-bold text-gray-900">30 Day Returns</h3><p className="text-xs text-gray-500 mt-1">Money back guarantee</p></div>
+             <div><h3 className="font-bold text-gray-900">{t('home.returns')}</h3><p className="text-xs text-gray-500 mt-1">{t('home.returnsDesc')}</p></div>
            </div>
         </div>
       </section>
@@ -154,11 +157,11 @@ const Home: React.FC = () => {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mt-8">
          <div className="flex justify-between items-end mb-8">
             <div>
-               <span className="text-indigo-600 font-bold tracking-wider uppercase text-xs">Collections</span>
-               <h2 className="text-3xl font-bold text-gray-900 mt-1">Shop by Category</h2>
+               <span className="text-indigo-600 font-bold tracking-wider uppercase text-xs">{t('home.collections')}</span>
+               <h2 className="text-3xl font-bold text-gray-900 mt-1">{t('home.shopByCategory')}</h2>
             </div>
             <Link to="/shop" className="group flex items-center text-gray-900 font-semibold hover:text-indigo-600 transition">
-              View All <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              {t('home.viewAll')} <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
          </div>
          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -168,7 +171,7 @@ const Home: React.FC = () => {
                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-8">
                     <h3 className="text-2xl font-bold text-white transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">{cat.name}</h3>
                     <div className="h-0 group-hover:h-6 overflow-hidden transition-all duration-300">
-                       <span className="text-gray-300 text-sm flex items-center gap-2 mt-2">Browse Collection <ArrowRight size={14} /></span>
+                       <span className="text-gray-300 text-sm flex items-center gap-2 mt-2">{t('home.browseCollection')} <ArrowRight size={14} /></span>
                     </div>
                  </div>
               </div>
@@ -180,9 +183,9 @@ const Home: React.FC = () => {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="flex items-center gap-3 mb-2">
             <span className="h-px w-8 bg-indigo-600"></span>
-            <span className="text-indigo-600 font-bold tracking-wider uppercase text-xs">Recently Added</span>
+            <span className="text-indigo-600 font-bold tracking-wider uppercase text-xs">{t('home.recentlyAdded')}</span>
         </div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-8">New Arrivals</h2>
+        <h2 className="text-3xl font-bold text-gray-900 mb-8">{t('home.newArrivals')}</h2>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {newArrivals.map((product) => (
@@ -195,14 +198,14 @@ const Home: React.FC = () => {
 
                   {product.isNew && (
                     <span className="absolute top-3 left-3 bg-white/90 backdrop-blur text-gray-900 text-[10px] px-3 py-1.5 uppercase font-bold tracking-widest rounded-full shadow-sm z-10">
-                      New
+                      {t('home.new')}
                     </span>
                   )}
 
                   {/* Quick Action Button */}
                   <div className="absolute bottom-4 left-0 right-0 px-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
                      <button className="w-full bg-white text-gray-900 py-3 rounded-xl shadow-lg font-bold text-sm hover:bg-gray-50 flex justify-center items-center gap-2">
-                        View Product <ArrowRight size={16}/>
+                        {t('home.viewProduct')} <ArrowRight size={16}/>
                      </button>
                   </div>
                 </div>
@@ -220,7 +223,7 @@ const Home: React.FC = () => {
                   </h3>
                   <div className="mt-auto pt-4 flex items-center justify-between border-t border-gray-50">
                     <div className="flex flex-col">
-                        <span className="text-xs text-gray-400">Price</span>
+                        <span className="text-xs text-gray-400">{t('product.price')}</span>
                         <p className="text-xl font-bold text-gray-900">${product.price}</p>
                     </div>
                     <div className="w-10 h-10 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm hover:shadow-md">
@@ -243,11 +246,11 @@ const Home: React.FC = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="flex justify-between items-end mb-10">
                 <div>
-                   <span className="text-indigo-300 font-bold tracking-wider uppercase text-xs">Limited Time</span>
-                   <h2 className="text-3xl font-bold text-white mt-2">Today's Deals</h2>
+                   <span className="text-indigo-300 font-bold tracking-wider uppercase text-xs">{t('home.limitedTime')}</span>
+                   <h2 className="text-3xl font-bold text-white mt-2">{t('home.todaysDeals')}</h2>
                 </div>
                 <div className="hidden md:block">
-                    <span className="text-sm text-gray-400">Offers end in: <span className="text-white font-mono font-bold">12:34:56</span></span>
+                    <span className="text-sm text-gray-400">{t('home.offersEnd')} <span className="text-white font-mono font-bold">12:34:56</span></span>
                 </div>
             </div>
             
@@ -272,7 +275,7 @@ const Home: React.FC = () => {
                              <span className="text-xl font-bold text-red-600">${product.price}</span>
                           </div>
                           <button className="text-xs font-bold uppercase tracking-wider text-indigo-600 border border-indigo-200 px-3 py-2 rounded-lg hover:bg-indigo-50 transition-colors">
-                             Grab Deal
+                             {t('home.grabDeal')}
                           </button>
                        </div>
                     </div>

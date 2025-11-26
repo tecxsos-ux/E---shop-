@@ -1,10 +1,13 @@
+
 import React, { useContext, useState } from 'react';
 import { StoreContext } from '../context/StoreContext';
 import { Link } from 'react-router-dom';
 import { Filter, ShoppingBag, Star, Heart } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 const Shop: React.FC = () => {
   const { state, dispatch } = useContext(StoreContext);
+  const { t } = useLanguage();
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   // Filter Logic
@@ -19,20 +22,20 @@ const Shop: React.FC = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex items-end justify-between border-b border-gray-200 pb-6 pt-24 md:pt-6 mb-8">
         <div>
-           <span className="text-indigo-600 font-semibold tracking-wider uppercase text-xs">Curated for you</span>
+           <span className="text-indigo-600 font-semibold tracking-wider uppercase text-xs">{t('shop.curated')}</span>
            <h1 className="text-4xl font-bold tracking-tight text-gray-900 mt-1">
-             {state.filters.category ? state.filters.category : 'All Products'}
+             {state.filters.category ? state.filters.category : t('shop.allProducts')}
            </h1>
         </div>
         
         <div className="flex items-center gap-4">
-          <span className="text-sm text-gray-500 hidden sm:block">Showing {filteredProducts.length} results</span>
+          <span className="text-sm text-gray-500 hidden sm:block">{t('shop.showingResults')} {filteredProducts.length}</span>
           <button 
             type="button" 
             className="p-2 text-gray-600 hover:text-indigo-600 lg:hidden border rounded-lg"
             onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
           >
-            <span className="sr-only">Filters</span>
+            <span className="sr-only">{t('shop.filters')}</span>
             <Filter className="w-5 h-5" />
           </button>
         </div>
@@ -44,7 +47,7 @@ const Shop: React.FC = () => {
           {/* Filters - Desktop */}
           <form className="hidden lg:block space-y-8 pr-4 border-r border-gray-100">
             <div>
-              <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-6">Categories</h3>
+              <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-6">{t('shop.categories')}</h3>
               <ul className="space-y-3 text-sm">
                 <li>
                   <button 
@@ -52,7 +55,7 @@ const Shop: React.FC = () => {
                     onClick={() => dispatch({type: 'SET_FILTER_CATEGORY', payload: null})}
                     className={`flex items-center w-full px-3 py-2 rounded-lg transition-all ${state.filters.category === null ? 'bg-indigo-50 text-indigo-700 font-bold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'}`}
                   >
-                    All Products
+                    {t('shop.allProducts')}
                   </button>
                 </li>
                 {state.categories.map((category) => (
@@ -71,7 +74,7 @@ const Shop: React.FC = () => {
 
             {state.filters.category && (
               <div className="pt-6 border-t border-gray-100">
-                 <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-6">Sub-Categories</h3>
+                 <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-6">{t('shop.subCategories')}</h3>
                  <ul className="space-y-3 text-sm">
                    {state.categories.find(c => c.name === state.filters.category)?.subCategories.map((sub) => (
                       <li key={sub}>
@@ -90,9 +93,9 @@ const Shop: React.FC = () => {
             
             <div className="pt-6 border-t border-gray-100">
                 <div className="bg-indigo-600 rounded-xl p-6 text-white text-center">
-                    <h4 className="font-bold text-lg mb-2">Summer Sale</h4>
-                    <p className="text-indigo-100 text-sm mb-4">Up to 50% off on selected items.</p>
-                    <button type="button" className="w-full bg-white text-indigo-600 py-2 rounded-lg text-sm font-bold hover:bg-indigo-50 transition">View Offers</button>
+                    <h4 className="font-bold text-lg mb-2">{t('shop.saleTitle')}</h4>
+                    <p className="text-indigo-100 text-sm mb-4">{t('shop.saleDesc')}</p>
+                    <button type="button" className="w-full bg-white text-indigo-600 py-2 rounded-lg text-sm font-bold hover:bg-indigo-50 transition">{t('shop.viewOffers')}</button>
                 </div>
             </div>
           </form>
@@ -102,9 +105,9 @@ const Shop: React.FC = () => {
              {filteredProducts.length === 0 ? (
                <div className="flex flex-col items-center justify-center py-24 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
                  <ShoppingBag className="w-16 h-16 text-gray-300 mb-4" />
-                 <h3 className="text-xl font-bold text-gray-900">No products found</h3>
-                 <p className="mt-2 text-gray-500">Try adjusting your filters or search criteria.</p>
-                 <button onClick={() => dispatch({type: 'SET_FILTER_CATEGORY', payload: null})} className="mt-6 text-indigo-600 font-medium hover:underline">Clear all filters</button>
+                 <h3 className="text-xl font-bold text-gray-900">{t('shop.noProducts')}</h3>
+                 <p className="mt-2 text-gray-500">{t('shop.adjustFilters')}</p>
+                 <button onClick={() => dispatch({type: 'SET_FILTER_CATEGORY', payload: null})} className="mt-6 text-indigo-600 font-medium hover:underline">{t('shop.clearFilters')}</button>
                </div>
              ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -124,7 +127,7 @@ const Shop: React.FC = () => {
                         <div className="absolute top-3 left-3 flex flex-col gap-2">
                             {product.isNew && (
                                 <span className="bg-gray-900 text-white text-[10px] px-2 py-1 uppercase font-bold tracking-widest rounded shadow-sm">
-                                New
+                                {t('home.new')}
                                 </span>
                             )}
                             {product.discount && (
@@ -137,7 +140,7 @@ const Shop: React.FC = () => {
                         {/* Quick View Button */}
                         <div className="absolute bottom-4 left-4 right-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
                            <button className="w-full bg-white/95 backdrop-blur text-gray-900 py-3 rounded-xl shadow-lg font-bold text-sm hover:bg-white transition-colors">
-                               View Details
+                               {t('shop.viewDetails')}
                            </button>
                         </div>
                       </div>
