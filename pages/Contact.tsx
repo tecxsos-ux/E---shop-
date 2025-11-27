@@ -1,10 +1,13 @@
 
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Mail, Phone, MapPin, Send, Clock, CheckCircle } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { StoreContext } from '../context/StoreContext';
 
 const Contact: React.FC = () => {
   const { t } = useLanguage();
+  const { state } = useContext(StoreContext);
+  const { settings } = state;
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -50,8 +53,7 @@ const Contact: React.FC = () => {
                         </div>
                         <div>
                             <p className="text-sm font-semibold text-gray-900">{t('contact.emailUs')}</p>
-                            <p className="text-gray-600">support@luxemarket.ai</p>
-                            <p className="text-gray-600">info@luxemarket.ai</p>
+                            <p className="text-gray-600">{settings.companyEmail || 'support@luxemarket.ai'}</p>
                         </div>
                     </div>
 
@@ -61,8 +63,7 @@ const Contact: React.FC = () => {
                         </div>
                         <div>
                             <p className="text-sm font-semibold text-gray-900">{t('contact.callUs')}</p>
-                            <p className="text-gray-600">+1 (555) 123-4567</p>
-                            <p className="text-xs text-gray-500 mt-1">Mon-Fri from 8am to 5pm</p>
+                            <p className="text-gray-600">{settings.companyPhone || '+1 (555) 123-4567'}</p>
                         </div>
                     </div>
 
@@ -72,9 +73,8 @@ const Contact: React.FC = () => {
                         </div>
                         <div>
                             <p className="text-sm font-semibold text-gray-900">{t('contact.visitUs')}</p>
-                            <p className="text-gray-600">
-                                123 Luxury Lane, Suite 100<br/>
-                                Beverly Hills, CA 90210
+                            <p className="text-gray-600 whitespace-pre-line">
+                                {settings.companyAddress || '123 Luxury Lane, Suite 100\nBeverly Hills, CA 90210'}
                             </p>
                         </div>
                     </div>
@@ -85,10 +85,8 @@ const Contact: React.FC = () => {
                         </div>
                         <div>
                             <p className="text-sm font-semibold text-gray-900">{t('contact.hours')}</p>
-                            <div className="text-gray-600 text-sm grid grid-cols-2 gap-x-4">
-                                <span>Mon - Fri:</span> <span>9:00 AM - 6:00 PM</span>
-                                <span>Saturday:</span> <span>10:00 AM - 4:00 PM</span>
-                                <span>Sunday:</span> <span>Closed</span>
+                            <div className="text-gray-600 text-sm">
+                                {settings.companyWorkingHours || 'Mon - Fri: 9:00 AM - 6:00 PM'}
                             </div>
                         </div>
                     </div>

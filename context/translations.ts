@@ -19,7 +19,8 @@ export const translations = {
       footerDesc: "Elevating your shopping experience with curated luxury items and seamless technology.",
       shopSection: "Shop",
       supportSection: "Support",
-      rights: "All rights reserved."
+      rights: "All rights reserved.",
+      selectLanguage: "Select Language"
     },
     home: {
       featured: "Featured Collection",
@@ -58,7 +59,13 @@ export const translations = {
       clearFilters: "Clear all filters",
       viewDetails: "View Details",
       saleTitle: "Summer Sale",
-      saleDesc: "Up to 50% off on selected items."
+      saleDesc: "Up to 50% off on selected items.",
+      sortBy: "Sort by",
+      sortPopularity: "Popularity",
+      sortPriceLowHigh: "Price: Low to High",
+      sortPriceHighLow: "Price: High to Low",
+      sortNameAZ: "Name: A-Z",
+      sortNameZA: "Name: Z-A"
     },
     product: {
       reviews: "Reviews",
@@ -68,6 +75,10 @@ export const translations = {
       selectColor: "Please select a color",
       size: "Size",
       color: "Color",
+      quantity: "Quantity",
+      relatedProducts: "Related Products",
+      quickView: "Quick View",
+      addToWishlist: "Add to Wishlist",
       fastDelivery: "Fast Delivery",
       freeReturns: "Free Returns",
       warranty: "2 Year Warranty",
@@ -145,7 +156,8 @@ export const translations = {
       footerDesc: "Améliorez votre expérience d'achat avec des articles de luxe et une technologie fluide.",
       shopSection: "Boutique",
       supportSection: "Support",
-      rights: "Tous droits réservés."
+      rights: "Tous droits réservés.",
+      selectLanguage: "Choisir la langue"
     },
     home: {
       featured: "Collection Vedette",
@@ -184,7 +196,13 @@ export const translations = {
       clearFilters: "Effacer les filtres",
       viewDetails: "Voir Détails",
       saleTitle: "Soldes d'été",
-      saleDesc: "Jusqu'à 50% de réduction."
+      saleDesc: "Jusqu'à 50% de réduction.",
+      sortBy: "Trier par",
+      sortPopularity: "Popularité",
+      sortPriceLowHigh: "Prix : Croissant",
+      sortPriceHighLow: "Prix : Décroissant",
+      sortNameAZ: "Nom : A-Z",
+      sortNameZA: "Nom : Z-A"
     },
     product: {
       reviews: "Avis",
@@ -194,6 +212,10 @@ export const translations = {
       selectColor: "Veuillez sélectionner une couleur",
       size: "Taille",
       color: "Couleur",
+      quantity: "Quantité",
+      relatedProducts: "Produits apparentés",
+      quickView: "Aperçu rapide",
+      addToWishlist: "Ajouter à la liste de souhaits",
       fastDelivery: "Livraison Rapide",
       freeReturns: "Retours Gratuits",
       warranty: "Garantie 2 Ans",
@@ -271,7 +293,8 @@ export const translations = {
       footerDesc: "Verbessern Sie Ihr Einkaufserlebnis mit kuratierten Luxusartikeln.",
       shopSection: "Einkaufen",
       supportSection: "Support",
-      rights: "Alle Rechte vorbehalten."
+      rights: "Alle Rechte vorbehalten.",
+      selectLanguage: "Sprache wählen"
     },
     home: {
       featured: "Empfohlene Kollektion",
@@ -310,7 +333,13 @@ export const translations = {
       clearFilters: "Filter löschen",
       viewDetails: "Details anzeigen",
       saleTitle: "Sommerschlussverkauf",
-      saleDesc: "Bis zu 50% Rabatt."
+      saleDesc: "Bis zu 50% Rabatt.",
+      sortBy: "Sortieren nach",
+      sortPopularity: "Beliebtheit",
+      sortPriceLowHigh: "Preis: Aufsteigend",
+      sortPriceHighLow: "Preis: Absteigend",
+      sortNameAZ: "Name: A-Z",
+      sortNameZA: "Name: Z-A"
     },
     product: {
       reviews: "Bewertungen",
@@ -320,6 +349,10 @@ export const translations = {
       selectColor: "Bitte Farbe wählen",
       size: "Größe",
       color: "Farbe",
+      quantity: "Menge",
+      relatedProducts: "Ähnliche Produkte",
+      quickView: "Schnellansicht",
+      addToWishlist: "Auf die Wunschliste",
       fastDelivery: "Schnelle Lieferung",
       freeReturns: "Kostenlose Rückgabe",
       warranty: "2 Jahre Garantie",
@@ -397,7 +430,8 @@ export const translations = {
       footerDesc: "Migliora la tua esperienza di shopping con articoli di lusso.",
       shopSection: "Negozio",
       supportSection: "Supporto",
-      rights: "Tutti i diritti riservati."
+      rights: "Tutti i diritti riservati.",
+      selectLanguage: "Seleziona lingua"
     },
     home: {
       featured: "Collezione in evidenza",
@@ -436,7 +470,13 @@ export const translations = {
       clearFilters: "Cancella filtri",
       viewDetails: "Vedi dettagli",
       saleTitle: "Saldi estivi",
-      saleDesc: "Fino al 50% di sconto."
+      saleDesc: "Fino al 50% di sconto.",
+      sortBy: "Ordina per",
+      sortPopularity: "Popolarità",
+      sortPriceLowHigh: "Prezzo: Basso a Alto",
+      sortPriceHighLow: "Prezzo: Alto a Basso",
+      sortNameAZ: "Nome: A-Z",
+      sortNameZA: "Nome: Z-A"
     },
     product: {
       reviews: "Recensioni",
@@ -446,6 +486,10 @@ export const translations = {
       selectColor: "Seleziona un colore",
       size: "Taglia",
       color: "Colore",
+      quantity: "Quantità",
+      relatedProducts: "Prodotti correlati",
+      quickView: "Anteprima",
+      addToWishlist: "Aggiungi alla lista dei desideri",
       fastDelivery: "Consegna rapida",
       freeReturns: "Resi gratuiti",
       warranty: "Garanzia 2 anni",

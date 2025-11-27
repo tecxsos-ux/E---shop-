@@ -92,7 +92,25 @@ export interface Settings {
   brandName: string;
   brandLogo: string;
   primaryColor: string;
+  secondaryColor: string;
   brandTextColor: string;
+  
+  // Header Settings
+  headerBackgroundColor?: string;
+  headerTextColor?: string;
+
+  // Footer Settings
+  footerBackgroundColor?: string;
+  footerTextColor?: string;
+
   taxRate: number; // Percentage
   shippingCost: number; // Flat rate
+  
+  // Company Info
+  companyName: string;
+  companyAddress: string;
+  companyTaxId: string;
+  companyPhone: string;
+  companyEmail: string;
+  companyWorkingHours: string;
 }

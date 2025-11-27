@@ -31,14 +31,14 @@ const Home: React.FC = () => {
   const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
 
   return (
-    <div className="flex flex-col gap-12 pb-20 bg-gray-50/50">
+    <div className="flex flex-col gap-12 pb-20 bg-gray-50/50 dark:bg-gray-900 transition-colors duration-300">
       
       {/* Hero Grid Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-auto lg:h-[550px]">
           
           {/* Main Carousel - Spans 3 columns */}
-          <div className="lg:col-span-3 relative rounded-2xl overflow-hidden shadow-xl group h-[400px] lg:h-full bg-gray-200">
+          <div className="lg:col-span-3 relative rounded-2xl overflow-hidden shadow-xl group h-[400px] lg:h-full bg-gray-200 dark:bg-gray-800">
             {slides.length > 0 ? (
               <>
                 {slides.map((slide, index) => (
@@ -75,29 +75,36 @@ const Home: React.FC = () => {
                   </div>
                 ))}
 
-                {/* Carousel Controls */}
-                <div className="absolute bottom-6 right-6 z-20 flex gap-2">
-                  <button onClick={prevSlide} className="p-2 rounded-full bg-white/10 hover:bg-white/30 backdrop-blur-md text-white border border-white/20 transition-all">
-                    <ChevronLeft size={24} />
-                  </button>
-                  <button onClick={nextSlide} className="p-2 rounded-full bg-white/10 hover:bg-white/30 backdrop-blur-md text-white border border-white/20 transition-all">
-                    <ChevronRight size={24} />
-                  </button>
-                </div>
+                {/* Carousel Controls - Arrows */}
+                <button 
+                  onClick={prevSlide} 
+                  aria-label="Previous Slide"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-black/20 hover:bg-black/50 backdrop-blur-md text-white border border-white/10 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 hover:scale-110"
+                >
+                  <ChevronLeft size={32} />
+                </button>
+                <button 
+                  onClick={nextSlide} 
+                  aria-label="Next Slide"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-black/20 hover:bg-black/50 backdrop-blur-md text-white border border-white/10 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 hover:scale-110"
+                >
+                  <ChevronRight size={32} />
+                </button>
                 
-                {/* Dots */}
-                <div className="absolute bottom-6 left-8 z-20 flex gap-2">
+                {/* Dots Indicators */}
+                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-3 p-2 rounded-full bg-black/10 backdrop-blur-sm">
                   {slides.map((_, idx) => (
                     <button 
                       key={idx}
                       onClick={() => setCurrentSlide(idx)}
-                      className={`h-2 rounded-full transition-all duration-300 ${idx === currentSlide ? 'w-8 bg-white' : 'w-2 bg-white/40 hover:bg-white/60'}`}
+                      aria-label={`Go to slide ${idx + 1}`}
+                      className={`h-2.5 rounded-full transition-all duration-300 shadow-sm ${idx === currentSlide ? 'w-8 bg-white' : 'w-2.5 bg-white/50 hover:bg-white/80'}`}
                     />
                   ))}
                 </div>
               </>
             ) : (
-               <div className="flex items-center justify-center h-full text-gray-500">
+               <div className="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">
                   <p>No slides available. Please configure in Admin Panel.</p>
                </div>
             )}
@@ -107,7 +114,7 @@ const Home: React.FC = () => {
           <div className="lg:col-span-1 flex flex-col gap-6 h-auto lg:h-[550px]">
              
              {banners.map(banner => (
-                <Link key={banner.id} to={banner.link} className="flex-1 relative rounded-2xl overflow-hidden shadow-lg group h-[260px] lg:h-auto">
+                <Link key={banner.id} to={banner.link} className="flex-1 relative rounded-2xl overflow-hidden shadow-lg group h-[260px] lg:h-auto border border-gray-100 dark:border-gray-700">
                     <img src={banner.image} alt={banner.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
                     <div className="absolute bottom-0 left-0 p-6 w-full">
@@ -127,17 +134,17 @@ const Home: React.FC = () => {
       {/* Features */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mt-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-           <div className="flex items-center gap-4 p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-             <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl"><Truck size={24} /></div>
-             <div><h3 className="font-bold text-gray-900">{t('home.freeShipping')}</h3><p className="text-xs text-gray-500 mt-1">{t('home.freeShippingDesc')}</p></div>
+           <div className="flex items-center gap-4 p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all">
+             <div className="p-3 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-xl"><Truck size={24} /></div>
+             <div><h3 className="font-bold text-gray-900 dark:text-white">{t('home.freeShipping')}</h3><p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{t('home.freeShippingDesc')}</p></div>
            </div>
-           <div className="flex items-center gap-4 p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-             <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl"><ShieldCheck size={24} /></div>
-             <div><h3 className="font-bold text-gray-900">{t('home.securePayment')}</h3><p className="text-xs text-gray-500 mt-1">{t('home.securePaymentDesc')}</p></div>
+           <div className="flex items-center gap-4 p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all">
+             <div className="p-3 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-xl"><ShieldCheck size={24} /></div>
+             <div><h3 className="font-bold text-gray-900 dark:text-white">{t('home.securePayment')}</h3><p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{t('home.securePaymentDesc')}</p></div>
            </div>
-           <div className="flex items-center gap-4 p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-             <div className="p-3 bg-purple-50 text-purple-600 rounded-xl"><ShoppingBag size={24} /></div>
-             <div><h3 className="font-bold text-gray-900">{t('home.returns')}</h3><p className="text-xs text-gray-500 mt-1">{t('home.returnsDesc')}</p></div>
+           <div className="flex items-center gap-4 p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all">
+             <div className="p-3 bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-xl"><ShoppingBag size={24} /></div>
+             <div><h3 className="font-bold text-gray-900 dark:text-white">{t('home.returns')}</h3><p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{t('home.returnsDesc')}</p></div>
            </div>
         </div>
       </section>
@@ -146,10 +153,10 @@ const Home: React.FC = () => {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mt-8">
          <div className="flex justify-between items-end mb-8">
             <div>
-               <span className="text-indigo-600 font-bold tracking-wider uppercase text-xs">{t('home.collections')}</span>
-               <h2 className="text-3xl font-bold text-gray-900 mt-1">{t('home.shopByCategory')}</h2>
+               <span className="text-indigo-600 dark:text-indigo-400 font-bold tracking-wider uppercase text-xs">{t('home.collections')}</span>
+               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mt-1">{t('home.shopByCategory')}</h2>
             </div>
-            <Link to="/shop" className="group flex items-center text-gray-900 font-semibold hover:text-indigo-600 transition">
+            <Link to="/shop" className="group flex items-center text-gray-900 dark:text-white font-semibold hover:text-indigo-600 dark:hover:text-indigo-400 transition">
               {t('home.viewAll')} <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
          </div>
@@ -171,29 +178,29 @@ const Home: React.FC = () => {
       {/* New Arrivals */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="flex items-center gap-3 mb-2">
-            <span className="h-px w-8 bg-indigo-600"></span>
-            <span className="text-indigo-600 font-bold tracking-wider uppercase text-xs">{t('home.recentlyAdded')}</span>
+            <span className="h-px w-8 bg-indigo-600 dark:bg-indigo-400"></span>
+            <span className="text-indigo-600 dark:text-indigo-400 font-bold tracking-wider uppercase text-xs">{t('home.recentlyAdded')}</span>
         </div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-8">{t('home.newArrivals')}</h2>
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">{t('home.newArrivals')}</h2>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {newArrivals.map((product) => (
-             <Link key={product.id} to={`/product/${product.id}`} className="group relative bg-white rounded-2xl shadow-md hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-300 hover:-translate-y-2 flex flex-col overflow-hidden">
-                <div className="relative h-72 overflow-hidden bg-gray-100">
+             <Link key={product.id} to={`/product/${product.id}`} className="group relative bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-300 hover:-translate-y-2 flex flex-col overflow-hidden border border-gray-100 dark:border-gray-700">
+                <div className="relative h-72 overflow-hidden bg-gray-100 dark:bg-gray-700">
                   <img src={product.image} alt={product.name} className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700" />
                   
                   {/* Overlay Gradient */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
                   {product.isNew && (
-                    <span className="absolute top-3 left-3 bg-white/90 backdrop-blur text-gray-900 text-[10px] px-3 py-1.5 uppercase font-bold tracking-widest rounded-full shadow-sm z-10">
+                    <span className="absolute top-3 left-3 bg-white/90 dark:bg-gray-900/90 backdrop-blur text-gray-900 dark:text-white text-[10px] px-3 py-1.5 uppercase font-bold tracking-widest rounded-full shadow-sm z-10">
                       {t('home.new')}
                     </span>
                   )}
 
                   {/* Quick Action Button */}
                   <div className="absolute bottom-4 left-0 right-0 px-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                     <button className="w-full bg-white text-gray-900 py-3 rounded-xl shadow-lg font-bold text-sm hover:bg-gray-50 flex justify-center items-center gap-2">
+                     <button className="w-full bg-white dark:bg-gray-900 text-gray-900 dark:text-white py-3 rounded-xl shadow-lg font-bold text-sm hover:bg-gray-50 dark:hover:bg-gray-800 flex justify-center items-center gap-2">
                         {t('home.viewProduct')} <ArrowRight size={16}/>
                      </button>
                   </div>
@@ -207,15 +214,15 @@ const Home: React.FC = () => {
                           <span className="text-xs text-gray-400 font-bold">4.8</span>
                       </div>
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2 leading-tight group-hover:text-indigo-600 transition-colors">
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 leading-tight group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                       {product.name}
                   </h3>
-                  <div className="mt-auto pt-4 flex items-center justify-between border-t border-gray-50">
+                  <div className="mt-auto pt-4 flex items-center justify-between border-t border-gray-50 dark:border-gray-700">
                     <div className="flex flex-col">
                         <span className="text-xs text-gray-400">{t('product.price')}</span>
-                        <p className="text-xl font-bold text-gray-900">${product.price}</p>
+                        <p className="text-xl font-bold text-gray-900 dark:text-white">${product.price}</p>
                     </div>
-                    <div className="w-10 h-10 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm hover:shadow-md">
+                    <div className="w-10 h-10 rounded-full bg-indigo-50 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm hover:shadow-md">
                         <ShoppingBag size={18} />
                     </div>
                   </div>
@@ -227,7 +234,7 @@ const Home: React.FC = () => {
 
       {/* Today's Offer */}
       {todayOffers.length > 0 && (
-        <section className="bg-gradient-to-br from-indigo-900 to-slate-900 py-20 text-white relative overflow-hidden">
+        <section className="bg-gradient-to-br from-indigo-900 to-slate-900 py-20 text-white relative overflow-hidden mt-8">
           {/* Decorative blobs */}
           <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 -translate-y-1/2 translate-x-1/2"></div>
           <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 translate-y-1/2 -translate-x-1/2"></div>
@@ -245,7 +252,7 @@ const Home: React.FC = () => {
             
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
               {todayOffers.map((product) => (
-                <Link key={product.id} to={`/product/${product.id}`} className="group block bg-white rounded-2xl overflow-hidden shadow-2xl hover:shadow-indigo-500/20 transition-all duration-300 hover:-translate-y-2">
+                <Link key={product.id} to={`/product/${product.id}`} className="group block bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-2xl hover:shadow-indigo-500/20 transition-all duration-300 hover:-translate-y-2 border border-transparent dark:border-gray-700">
                     <div className="relative h-64 overflow-hidden">
                       <img src={product.image} alt={product.name} className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700" />
                       
@@ -257,13 +264,13 @@ const Home: React.FC = () => {
                     </div>
                     
                     <div className="p-5">
-                       <h3 className="text-lg font-bold text-gray-900 line-clamp-1">{product.name}</h3>
+                       <h3 className="text-lg font-bold text-gray-900 dark:text-white line-clamp-1">{product.name}</h3>
                        <div className="mt-3 flex items-center justify-between">
                           <div className="flex flex-col">
-                             <span className="text-xs text-gray-500 line-through">${(product.price * 1.1).toFixed(2)}</span>
-                             <span className="text-xl font-bold text-red-600">${product.price}</span>
+                             <span className="text-xs text-gray-500 dark:text-gray-400 line-through">${(product.price * 1.1).toFixed(2)}</span>
+                             <span className="text-xl font-bold text-red-600 dark:text-red-400">${product.price}</span>
                           </div>
-                          <button className="text-xs font-bold uppercase tracking-wider text-indigo-600 border border-indigo-200 px-3 py-2 rounded-lg hover:bg-indigo-50 transition-colors">
+                          <button className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-700 px-3 py-2 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors">
                              {t('home.grabDeal')}
                           </button>
                        </div>

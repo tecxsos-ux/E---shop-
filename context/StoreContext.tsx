@@ -6,6 +6,7 @@ interface State {
   products: Product[];
   categories: Category[];
   cart: CartItem[];
+  wishlist: string[];
   user: User | null;
   orders: Order[];
   slides: Slide[];
@@ -135,6 +136,7 @@ const initialState: State = {
   products: initialProducts,
   categories: initialCategories,
   cart: [],
+  wishlist: [],
   user: { id: 'u1', name: 'Admin User', email: 'admin@luxe.com', role: 'admin' },
   orders: [
     {
@@ -161,9 +163,25 @@ const initialState: State = {
     brandName: 'LuxeMarket',
     brandLogo: '',
     primaryColor: '#4f46e5', // Default Indigo-600 hex
+    secondaryColor: '#d97706', // Default Amber-600
     brandTextColor: '#111827', // Default Gray-900
+    
+    headerBackgroundColor: '#ffffff', // Default White
+    headerTextColor: '#4b5563', // Default Gray-600
+    
+    footerBackgroundColor: '#111827', // Default Gray-900
+    footerTextColor: '#ffffff', // Default White
+    
     taxRate: 8, // 8% default
-    shippingCost: 15 // $15 default flat rate
+    shippingCost: 15, // $15 default flat rate
+    
+    // Company Info Defaults
+    companyName: 'LuxeMarket Inc.',
+    companyAddress: '123 Luxury Lane, Suite 100, Beverly Hills, CA 90210',
+    companyTaxId: 'US-88392102',
+    companyPhone: '+1 (555) 123-4567',
+    companyEmail: 'support@luxemarket.ai',
+    companyWorkingHours: 'Mon - Fri: 9:00 AM - 6:00 PM'
   }
 };
 
@@ -172,6 +190,7 @@ type Action =
   | { type: 'REMOVE_FROM_CART'; payload: CartItem }
   | { type: 'DECREASE_QTY'; payload: CartItem }
   | { type: 'CLEAR_CART' }
+  | { type: 'TOGGLE_WISHLIST'; payload: string }
   | { type: 'SET_USER'; payload: User | null }
   | { type: 'ADD_PRODUCT'; payload: Product }
   | { type: 'UPDATE_PRODUCT'; payload: Product }
@@ -231,6 +250,14 @@ const storeReducer = (state: State, action: Action): State => {
     }
     case 'CLEAR_CART':
       return { ...state, cart: [] };
+    case 'TOGGLE_WISHLIST':
+      const exists = state.wishlist.includes(action.payload);
+      return {
+        ...state,
+        wishlist: exists 
+          ? state.wishlist.filter(id => id !== action.payload)
+          : [...state.wishlist, action.payload]
+      };
     case 'SET_USER':
       return { ...state, user: action.payload };
     case 'ADD_PRODUCT':
