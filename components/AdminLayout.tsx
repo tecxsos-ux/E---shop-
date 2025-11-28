@@ -11,6 +11,7 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     { name: 'Products', path: '/admin/products', icon: <ShoppingBag size={20} /> },
     { name: 'Categories', path: '/admin/categories', icon: <Layers size={20} /> },
     { name: 'Orders', path: '/admin/orders', icon: <ShoppingCart size={20} /> },
+    { name: 'Users & Location', path: '/admin/users', icon: <Users size={20} /> },
     { name: 'Home Page Settings', path: '/admin/slider', icon: <Images size={20} /> },
     { name: 'Settings', path: '/admin/settings', icon: <Settings size={20} /> }, 
   ];

@@ -32,6 +32,10 @@ export interface User {
   email: string;
   role: 'admin' | 'customer';
   avatar?: string;
+  location?: string; // e.g., "Paris, France"
+  joinedDate?: string;
+  lastLogin?: string;
+  status?: 'active' | 'inactive';
 }
 
 export enum OrderStatus {

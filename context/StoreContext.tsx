@@ -7,7 +7,8 @@ interface State {
   categories: Category[];
   cart: CartItem[];
   wishlist: string[];
-  user: User | null;
+  user: User | null; // Current logged in user
+  users: User[]; // All registered users (for admin)
   orders: Order[];
   slides: Slide[];
   banners: Banner[];
@@ -132,12 +133,67 @@ const initialBanners: Banner[] = [
   }
 ];
 
+// Mock Registered Users
+const initialUsers: User[] = [
+  { 
+    id: 'u1', 
+    name: 'Admin User', 
+    email: 'admin@luxe.com', 
+    role: 'admin', 
+    location: 'New York, USA', 
+    joinedDate: '2023-01-15T09:00:00Z', 
+    lastLogin: new Date().toISOString(),
+    status: 'active'
+  },
+  { 
+    id: 'u2', 
+    name: 'Sophie Dupont', 
+    email: 'sophie@example.fr', 
+    role: 'customer', 
+    location: 'Paris, France', 
+    joinedDate: '2023-11-20T14:30:00Z', 
+    lastLogin: '2024-03-10T10:15:00Z',
+    status: 'active'
+  },
+  { 
+    id: 'u3', 
+    name: 'Hans Müller', 
+    email: 'hans@example.de', 
+    role: 'customer', 
+    location: 'Berlin, Germany', 
+    joinedDate: '2024-01-05T11:20:00Z', 
+    lastLogin: '2024-03-12T16:45:00Z',
+    status: 'active'
+  },
+  { 
+    id: 'u4', 
+    name: 'Marco Rossi', 
+    email: 'marco@example.it', 
+    role: 'customer', 
+    location: 'Rome, Italy', 
+    joinedDate: '2024-02-14T09:10:00Z', 
+    lastLogin: '2024-02-28T18:20:00Z',
+    status: 'inactive'
+  },
+  { 
+    id: 'u5', 
+    name: 'Sarah Jenkins', 
+    email: 'sarah@example.uk', 
+    role: 'customer', 
+    location: 'London, UK', 
+    joinedDate: '2024-03-01T13:00:00Z', 
+    lastLogin: '2024-03-14T08:30:00Z',
+    status: 'active'
+  }
+];
+
 const initialState: State = {
   products: initialProducts,
   categories: initialCategories,
   cart: [],
   wishlist: [],
-  user: { id: 'u1', name: 'Admin User', email: 'admin@luxe.com', role: 'admin' },
+  user: initialUsers[0], // Currently logged in
+  users: initialUsers, // All registered users
   orders: [
     {
        id: 'ORD-1001',

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
@@ -18,6 +19,7 @@ import AdminOrders from './pages/admin/Orders';
 import AdminSliderSettings from './pages/admin/SliderSettings';
 import AdminCategories from './pages/admin/Categories';
 import AdminSettings from './pages/admin/Settings';
+import AdminUsers from './pages/admin/Users';
 
 const App: React.FC = () => {
   return (
@@ -39,6 +41,7 @@ const App: React.FC = () => {
                 <Route path="/admin/products" element={<AdminProducts />} />
                 <Route path="/admin/categories" element={<AdminCategories />} />
                 <Route path="/admin/orders" element={<AdminOrders />} />
+                <Route path="/admin/users" element={<AdminUsers />} />
                 <Route path="/admin/slider" element={<AdminSliderSettings />} />
                 <Route path="/admin/settings" element={<AdminSettings />} />
                 
