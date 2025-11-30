@@ -18,8 +18,11 @@ interface State {
     search: string;
   };
   settings: Settings;
+  isLoading: boolean;
+  isDbConnected: boolean;
 }
 
+// --- Initial Mock Data (Fallback) ---
 const initialProducts: Product[] = [
   {
     id: '1',
@@ -133,7 +136,6 @@ const initialBanners: Banner[] = [
   }
 ];
 
-// Mock Registered Users
 const initialUsers: User[] = [
   { 
     id: 'u1', 
@@ -142,6 +144,16 @@ const initialUsers: User[] = [
     role: 'admin', 
     location: 'New York, USA', 
     joinedDate: '2023-01-15T09:00:00Z', 
+    lastLogin: new Date().toISOString(),
+    status: 'active'
+  },
+  { 
+    id: 'u_krish', 
+    name: 'Krish Admin', 
+    email: 'krish1988@live.com', 
+    role: 'admin', 
+    location: 'Admin HQ', 
+    joinedDate: new Date().toISOString(), 
     lastLogin: new Date().toISOString(),
     status: 'active'
   },
@@ -155,59 +167,36 @@ const initialUsers: User[] = [
     lastLogin: '2024-03-10T10:15:00Z',
     status: 'active'
   },
-  { 
-    id: 'u3', 
-    name: 'Hans Müller', 
-    email: 'hans@example.de', 
-    role: 'customer', 
-    location: 'Berlin, Germany', 
-    joinedDate: '2024-01-05T11:20:00Z', 
-    lastLogin: '2024-03-12T16:45:00Z',
-    status: 'active'
-  },
-  { 
-    id: 'u4', 
-    name: 'Marco Rossi', 
-    email: 'marco@example.it', 
-    role: 'customer', 
-    location: 'Rome, Italy', 
-    joinedDate: '2024-02-14T09:10:00Z', 
-    lastLogin: '2024-02-28T18:20:00Z',
-    status: 'inactive'
-  },
-  { 
-    id: 'u5', 
-    name: 'Sarah Jenkins', 
-    email: 'sarah@example.uk', 
-    role: 'customer', 
-    location: 'London, UK', 
-    joinedDate: '2024-03-01T13:00:00Z', 
-    lastLogin: '2024-03-14T08:30:00Z',
-    status: 'active'
-  }
 ];
+
+const defaultSettings: Settings = {
+    brandName: 'LuxeMarket',
+    brandLogo: '',
+    primaryColor: '#4f46e5',
+    secondaryColor: '#d97706',
+    brandTextColor: '#111827',
+    headerBackgroundColor: '#ffffff',
+    headerTextColor: '#4b5563',
+    footerBackgroundColor: '#111827',
+    footerTextColor: '#ffffff',
+    taxRate: 8,
+    shippingCost: 15,
+    companyName: 'LuxeMarket Inc.',
+    companyAddress: '123 Luxury Lane, Suite 100, Beverly Hills, CA 90210',
+    companyTaxId: 'US-88392102',
+    companyPhone: '+1 (555) 123-4567',
+    companyEmail: 'support@luxemarket.ai',
+    companyWorkingHours: 'Mon - Fri: 9:00 AM - 6:00 PM'
+};
 
 const initialState: State = {
   products: initialProducts,
   categories: initialCategories,
   cart: [],
   wishlist: [],
-  user: initialUsers[0], // Currently logged in
-  users: initialUsers, // All registered users
-  orders: [
-    {
-       id: 'ORD-1001',
-       userId: 'u1',
-       date: new Date().toISOString(),
-       status: OrderStatus.Delivered,
-       subtotal: 129.99,
-       tax: 10.40,
-       shippingCost: 0,
-       total: 140.39,
-       shippingAddress: { line1: '123 Fake St', city: 'Springfield', postalCode: '90210', country: 'USA' },
-       items: [{ ...initialProducts[0], quantity: 1 }]
-    }
-  ],
+  user: null,
+  users: initialUsers,
+  orders: [],
   slides: initialSlides,
   banners: initialBanners,
   filters: {
@@ -215,39 +204,22 @@ const initialState: State = {
     subCategory: null,
     search: '',
   },
-  settings: {
-    brandName: 'LuxeMarket',
-    brandLogo: '',
-    primaryColor: '#4f46e5', // Default Indigo-600 hex
-    secondaryColor: '#d97706', // Default Amber-600
-    brandTextColor: '#111827', // Default Gray-900
-    
-    headerBackgroundColor: '#ffffff', // Default White
-    headerTextColor: '#4b5563', // Default Gray-600
-    
-    footerBackgroundColor: '#111827', // Default Gray-900
-    footerTextColor: '#ffffff', // Default White
-    
-    taxRate: 8, // 8% default
-    shippingCost: 15, // $15 default flat rate
-    
-    // Company Info Defaults
-    companyName: 'LuxeMarket Inc.',
-    companyAddress: '123 Luxury Lane, Suite 100, Beverly Hills, CA 90210',
-    companyTaxId: 'US-88392102',
-    companyPhone: '+1 (555) 123-4567',
-    companyEmail: 'support@luxemarket.ai',
-    companyWorkingHours: 'Mon - Fri: 9:00 AM - 6:00 PM'
-  }
+  settings: defaultSettings,
+  isLoading: true,
+  isDbConnected: false
 };
 
+// --- Actions ---
 type Action =
+  | { type: 'LOAD_DATA'; payload: Partial<State> }
   | { type: 'ADD_TO_CART'; payload: CartItem }
   | { type: 'REMOVE_FROM_CART'; payload: CartItem }
   | { type: 'DECREASE_QTY'; payload: CartItem }
   | { type: 'CLEAR_CART' }
   | { type: 'TOGGLE_WISHLIST'; payload: string }
   | { type: 'SET_USER'; payload: User | null }
+  | { type: 'REGISTER_USER'; payload: User }
+  | { type: 'LOGIN_USER'; payload: string }
   | { type: 'ADD_PRODUCT'; payload: Product }
   | { type: 'UPDATE_PRODUCT'; payload: Product }
   | { type: 'ADD_ORDER'; payload: Order }
@@ -261,10 +233,25 @@ type Action =
   | { type: 'ADD_CATEGORY'; payload: Category }
   | { type: 'DELETE_CATEGORY'; payload: string }
   | { type: 'UPDATE_BANNER'; payload: Banner }
-  | { type: 'UPDATE_SETTINGS'; payload: Settings };
+  | { type: 'UPDATE_SETTINGS'; payload: Settings }
+  | { type: 'SET_DB_STATUS'; payload: boolean };
 
 const storeReducer = (state: State, action: Action): State => {
+  // --- Backend Sync Helper (Fire and Forget) ---
+  const sync = (endpoint: string, method: string, body: any) => {
+    if (!state.isDbConnected) return; // Only sync if connected
+    fetch(`http://localhost:5000/api/${endpoint}`, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    }).catch(err => console.log("Backend sync failed:", err));
+  };
+
   switch (action.type) {
+    case 'LOAD_DATA':
+      return { ...state, ...action.payload, isLoading: false };
+    case 'SET_DB_STATUS':
+      return { ...state, isDbConnected: action.payload };  
     case 'ADD_TO_CART': {
       const existingItemIndex = state.cart.findIndex(
         item => item.id === action.payload.id && 
@@ -316,16 +303,26 @@ const storeReducer = (state: State, action: Action): State => {
       };
     case 'SET_USER':
       return { ...state, user: action.payload };
+    case 'REGISTER_USER':
+       sync('users', 'POST', action.payload);
+       return { ...state, users: [...state.users, action.payload], user: action.payload };
+    case 'LOGIN_USER':
+       const loggedUser = state.users.find(u => u.email.toLowerCase() === action.payload.toLowerCase());
+       return loggedUser ? { ...state, user: loggedUser } : state;
     case 'ADD_PRODUCT':
+      sync('products', 'POST', action.payload);
       return { ...state, products: [...state.products, action.payload] };
     case 'UPDATE_PRODUCT':
+       // Note: Add PUT endpoint to server if needed
        return {
          ...state,
          products: state.products.map(p => p.id === action.payload.id ? action.payload : p)
        };
     case 'ADD_ORDER':
+      sync('orders', 'POST', action.payload);
       return { ...state, orders: [action.payload, ...state.orders] };
     case 'UPDATE_ORDER_STATUS':
+      sync(`orders/${action.payload.id}`, 'PUT', { status: action.payload.status });
       return {
         ...state,
         orders: state.orders.map(o => o.id === action.payload.id ? { ...o, status: action.payload.status } : o)
@@ -337,18 +334,21 @@ const storeReducer = (state: State, action: Action): State => {
     case 'SET_SEARCH':
       return { ...state, filters: { ...state.filters, search: action.payload } };
     case 'ADD_SLIDE':
+      sync('slides', 'POST', action.payload);
       return { ...state, slides: [...state.slides, action.payload] };
     case 'UPDATE_SLIDE':
       return { ...state, slides: state.slides.map(s => s.id === action.payload.id ? action.payload : s) };
     case 'DELETE_SLIDE':
       return { ...state, slides: state.slides.filter(s => s.id !== action.payload) };
     case 'ADD_CATEGORY':
+      sync('categories', 'POST', action.payload);
       return { ...state, categories: [...state.categories, action.payload] };
     case 'DELETE_CATEGORY':
       return { ...state, categories: state.categories.filter(c => c.id !== action.payload) };
     case 'UPDATE_BANNER':
       return { ...state, banners: state.banners.map(b => b.id === action.payload.id ? action.payload : b) };
     case 'UPDATE_SETTINGS':
+      sync('settings', 'POST', action.payload);
       return { ...state, settings: action.payload };
     default:
       return state;
@@ -358,13 +358,66 @@ const storeReducer = (state: State, action: Action): State => {
 export const StoreContext = createContext<{
   state: State;
   dispatch: React.Dispatch<Action>;
-}>({ state: initialState, dispatch: () => null });
+  refreshData: () => Promise<void>;
+}>({ state: initialState, dispatch: () => null, refreshData: async () => {} });
 
 export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(storeReducer, initialState);
+
+  const fetchData = async () => {
+    try {
+      const API = 'http://localhost:5000/api';
+      
+      // 1. Check health
+      const healthRes = await fetch(`${API}/health`).catch(() => null);
+      if (!healthRes || !healthRes.ok) throw new Error("Backend offline");
+
+      dispatch({ type: 'SET_DB_STATUS', payload: true });
+
+      // 2. Fetch all data in parallel
+      const [productsRes, catsRes, slidesRes, usersRes, ordersRes, settingsRes] = await Promise.all([
+         fetch(`${API}/products`),
+         fetch(`${API}/categories`),
+         fetch(`${API}/slides`),
+         fetch(`${API}/users`),
+         fetch(`${API}/orders`),
+         fetch(`${API}/settings`)
+      ]);
+
+      const products = await productsRes.json();
+      const categories = await catsRes.json();
+      const slides = await slidesRes.json();
+      const users = await usersRes.json();
+      const orders = await ordersRes.json();
+      const settings = await settingsRes.json();
+
+      dispatch({
+        type: 'LOAD_DATA',
+        payload: {
+          products: products.length > 0 ? products : initialProducts,
+          categories: categories.length > 0 ? categories : initialCategories,
+          slides: slides.length > 0 ? slides : initialSlides,
+          users: users.length > 0 ? users : initialUsers,
+          orders: orders.length > 0 ? orders : [],
+          settings: Object.keys(settings).length > 0 ? settings : defaultSettings
+        }
+      });
+      console.log("✅ Data successfully loaded from Backend.");
+    } catch (err) {
+      console.warn("⚠️ Server connection failed or API is offline. Using local mock data.", err);
+      // Fallback to mock is already in initialState, just set loading false and db false
+      dispatch({ type: 'LOAD_DATA', payload: {} });
+      dispatch({ type: 'SET_DB_STATUS', payload: false });
+    }
+  };
+
+  // --- Fetch Data from Backend on Load ---
+  useEffect(() => {
+    fetchData();
+  }, []);
   
   return (
-    <StoreContext.Provider value={{ state, dispatch }}>
+    <StoreContext.Provider value={{ state, dispatch, refreshData: fetchData }}>
       {children}
     </StoreContext.Provider>
   );

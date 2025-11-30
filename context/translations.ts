@@ -10,6 +10,8 @@ export const translations = {
       admin: "Admin",
       search: "Search...",
       myAccount: "My Account",
+      signIn: "Sign In",
+      signOut: "Sign Out",
       cart: "Shopping Cart",
       checkout: "Checkout",
       items: "items",
@@ -21,6 +23,26 @@ export const translations = {
       supportSection: "Support",
       rights: "All rights reserved.",
       selectLanguage: "Select Language"
+    },
+    auth: {
+      loginTitle: "Sign in to your account",
+      registerTitle: "Create an account",
+      noAccount: "Don't have an account?",
+      hasAccount: "Already have an account?",
+      registerNow: "Register now",
+      loginNow: "Sign in",
+      email: "Email address",
+      password: "Password",
+      name: "Full Name",
+      continueWith: "Or continue with",
+      loginBtn: "Sign In",
+      registerBtn: "Create Account",
+      google: "Google",
+      facebook: "Facebook",
+      x: "X (Twitter)",
+      errorLogin: "Invalid email or password",
+      errorExists: "User already exists",
+      successRegister: "Account created successfully! Please sign in."
     },
     home: {
       featured: "Featured Collection",
@@ -65,7 +87,9 @@ export const translations = {
       sortPriceLowHigh: "Price: Low to High",
       sortPriceHighLow: "Price: High to Low",
       sortNameAZ: "Name: A-Z",
-      sortNameZA: "Name: Z-A"
+      sortNameZA: "Name: Z-A",
+      sortBrandAZ: "Brand: A-Z",
+      sortBrandZA: "Brand: Z-A"
     },
     product: {
       reviews: "Reviews",
@@ -147,6 +171,8 @@ export const translations = {
       admin: "Admin",
       search: "Rechercher...",
       myAccount: "Mon Compte",
+      signIn: "Se connecter",
+      signOut: "Déconnexion",
       cart: "Panier",
       checkout: "Paiement",
       items: "articles",
@@ -158,6 +184,26 @@ export const translations = {
       supportSection: "Support",
       rights: "Tous droits réservés.",
       selectLanguage: "Choisir la langue"
+    },
+    auth: {
+      loginTitle: "Connectez-vous",
+      registerTitle: "Créer un compte",
+      noAccount: "Pas de compte ?",
+      hasAccount: "Vous avez déjà un compte ?",
+      registerNow: "S'inscrire",
+      loginNow: "Se connecter",
+      email: "Adresse Email",
+      password: "Mot de passe",
+      name: "Nom complet",
+      continueWith: "Ou continuer avec",
+      loginBtn: "Connexion",
+      registerBtn: "Créer un compte",
+      google: "Google",
+      facebook: "Facebook",
+      x: "X (Twitter)",
+      errorLogin: "Email ou mot de passe invalide",
+      errorExists: "L'utilisateur existe déjà",
+      successRegister: "Compte créé ! Veuillez vous connecter."
     },
     home: {
       featured: "Collection Vedette",
@@ -202,7 +248,9 @@ export const translations = {
       sortPriceLowHigh: "Prix : Croissant",
       sortPriceHighLow: "Prix : Décroissant",
       sortNameAZ: "Nom : A-Z",
-      sortNameZA: "Nom : Z-A"
+      sortNameZA: "Nom : Z-A",
+      sortBrandAZ: "Marque : A-Z",
+      sortBrandZA: "Marque : Z-A"
     },
     product: {
       reviews: "Avis",
@@ -255,7 +303,7 @@ export const translations = {
       name: "Votre Nom",
       email: "Adresse Email",
       subject: "Sujet",
-      message: "Message",
+      message: "Messaggio",
       sendBtn: "Envoyer le message",
       successTitle: "Message Envoyé !",
       successDesc: "Merci de nous avoir contactés.",
@@ -284,6 +332,8 @@ export const translations = {
       admin: "Admin",
       search: "Suchen...",
       myAccount: "Mein Konto",
+      signIn: "Anmelden",
+      signOut: "Abmelden",
       cart: "Warenkorb",
       checkout: "Kasse",
       items: "Artikel",
@@ -295,6 +345,26 @@ export const translations = {
       supportSection: "Support",
       rights: "Alle Rechte vorbehalten.",
       selectLanguage: "Sprache wählen"
+    },
+    auth: {
+      loginTitle: "Anmelden",
+      registerTitle: "Konto erstellen",
+      noAccount: "Kein Konto?",
+      hasAccount: "Haben Sie bereits ein Konto?",
+      registerNow: "Jetzt registrieren",
+      loginNow: "Anmelden",
+      email: "E-Mail-Adresse",
+      password: "Passwort",
+      name: "Vollständiger Name",
+      continueWith: "Oder weiter mit",
+      loginBtn: "Anmelden",
+      registerBtn: "Konto erstellen",
+      google: "Google",
+      facebook: "Facebook",
+      x: "X (Twitter)",
+      errorLogin: "Ungültige E-Mail oder Passwort",
+      errorExists: "Benutzer existiert bereits",
+      successRegister: "Konto erstellt! Bitte anmelden."
     },
     home: {
       featured: "Empfohlene Kollektion",
@@ -339,7 +409,9 @@ export const translations = {
       sortPriceLowHigh: "Preis: Aufsteigend",
       sortPriceHighLow: "Preis: Absteigend",
       sortNameAZ: "Name: A-Z",
-      sortNameZA: "Name: Z-A"
+      sortNameZA: "Name: Z-A",
+      sortBrandAZ: "Marke: A-Z",
+      sortBrandZA: "Marke: Z-A"
     },
     product: {
       reviews: "Bewertungen",
@@ -421,6 +493,8 @@ export const translations = {
       admin: "Admin",
       search: "Cerca...",
       myAccount: "Il mio account",
+      signIn: "Accedi",
+      signOut: "Esci",
       cart: "Carrello",
       checkout: "Checkout",
       items: "articoli",
@@ -432,6 +506,26 @@ export const translations = {
       supportSection: "Supporto",
       rights: "Tutti i diritti riservati.",
       selectLanguage: "Seleziona lingua"
+    },
+    auth: {
+      loginTitle: "Accedi al tuo account",
+      registerTitle: "Crea un account",
+      noAccount: "Non hai un account?",
+      hasAccount: "Hai già un account?",
+      registerNow: "Registrati ora",
+      loginNow: "Accedi",
+      email: "Indirizzo email",
+      password: "Password",
+      name: "Nome completo",
+      continueWith: "O continua con",
+      loginBtn: "Accedi",
+      registerBtn: "Crea account",
+      google: "Google",
+      facebook: "Facebook",
+      x: "X (Twitter)",
+      errorLogin: "Email o password non validi",
+      errorExists: "L'utente esiste già",
+      successRegister: "Account creato! Per favore accedi."
     },
     home: {
       featured: "Collezione in evidenza",
@@ -476,7 +570,9 @@ export const translations = {
       sortPriceLowHigh: "Prezzo: Basso a Alto",
       sortPriceHighLow: "Prezzo: Alto a Basso",
       sortNameAZ: "Nome: A-Z",
-      sortNameZA: "Nome: Z-A"
+      sortNameZA: "Nome: Z-A",
+      sortBrandAZ: "Marca: A-Z",
+      sortBrandZA: "Marca: Z-A"
     },
     product: {
       reviews: "Recensioni",

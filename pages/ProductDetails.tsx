@@ -2,7 +2,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { StoreContext } from '../context/StoreContext';
-import { Star, Truck, Shield, RotateCcw, ShoppingCart, Minus, Plus } from 'lucide-react';
+import { Star, Truck, Shield, RotateCcw, ShoppingCart, Minus, Plus, Check } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { Product } from '../types';
 
@@ -16,6 +16,7 @@ const ProductDetails: React.FC = () => {
   const [selectedColor, setSelectedColor] = useState<string>('');
   const [mainImage, setMainImage] = useState<string>('');
   const [quantity, setQuantity] = useState<number | string>(1);
+  const [isAdding, setIsAdding] = useState(false);
 
   // Reset state when product changes (e.g. clicking a related product)
   useEffect(() => {
@@ -51,6 +52,9 @@ const ProductDetails: React.FC = () => {
       return;
     }
     
+    // Start Animation
+    setIsAdding(true);
+
     // Ensure quantity is a valid number
     const qtyToAdd = typeof quantity === 'number' ? quantity : 1;
 
@@ -63,7 +67,11 @@ const ProductDetails: React.FC = () => {
         selectedSize: selectedSize || undefined,
       }
     });
-    alert(t('product.addedToCart'));
+
+    // Reset Animation after delay
+    setTimeout(() => {
+        setIsAdding(false);
+    }, 1000);
   };
 
   const handleQuickAdd = (e: React.MouseEvent, item: Product) => {
@@ -83,7 +91,6 @@ const ProductDetails: React.FC = () => {
         selectedSize: defaultSize,
       }
     });
-    alert(t('product.addedToCart'));
   };
 
   const handleQuantityChange = (delta: number) => {
@@ -224,9 +231,18 @@ const ProductDetails: React.FC = () => {
 
             <button 
               onClick={handleAddToCart}
-              className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition"
+              disabled={isAdding}
+              className={`w-full py-4 rounded-xl font-bold text-lg shadow-lg transition-all duration-300 transform flex items-center justify-center gap-2 ${isAdding ? 'bg-green-600 hover:bg-green-700 scale-95 text-white' : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-indigo-200 hover:-translate-y-1'}`}
             >
-              {t('product.addToCart')} - ${totalPrice}
+              {isAdding ? (
+                 <>
+                   <Check size={24} className="animate-bounce" /> {t('product.addedToCart')}
+                 </>
+              ) : (
+                 <>
+                   <ShoppingCart size={20} /> {t('product.addToCart')} - ${totalPrice}
+                 </>
+              )}
             </button>
             
             <div className="grid grid-cols-3 gap-4 text-center mt-8">

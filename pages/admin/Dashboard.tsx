@@ -1,12 +1,19 @@
 
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { StoreContext } from '../../context/StoreContext';
 import AdminLayout from '../../components/AdminLayout';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
-import { DollarSign, ShoppingBag, Users, TrendingUp, MapPin, Globe } from 'lucide-react';
+import { DollarSign, ShoppingBag, Users, TrendingUp, MapPin, Globe, Wifi, WifiOff, RefreshCw } from 'lucide-react';
 
 const AdminDashboard: React.FC = () => {
-  const { state } = useContext(StoreContext);
+  const { state, refreshData } = useContext(StoreContext);
+  const [retrying, setRetrying] = useState(false);
+
+  const handleRetry = async () => {
+      setRetrying(true);
+      await refreshData();
+      setRetrying(false);
+  };
 
   const totalSales = state.orders.reduce((acc, ord) => acc + ord.total, 0);
   const totalOrders = state.orders.length;
@@ -63,9 +70,38 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <AdminLayout>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-500">Overview of your store's performance and user activity.</p>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        <div>
+           <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+           <p className="text-gray-500">Overview of your store's performance and user activity.</p>
+        </div>
+        
+        {/* Connection Status Indicator */}
+        <div className="flex items-center gap-2">
+            <button 
+                onClick={handleRetry} 
+                disabled={retrying}
+                className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-gray-100 rounded-full transition disabled:opacity-50"
+                title="Retry Database Connection"
+            >
+                <RefreshCw size={20} className={retrying ? "animate-spin" : ""} />
+            </button>
+            <div className={`flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-bold shadow-sm ${state.isDbConnected ? 'bg-green-50 text-green-700 border-green-200' : 'bg-orange-50 text-orange-700 border-orange-200'}`}>
+                {state.isDbConnected ? (
+                    <>
+                    <span className="relative flex h-3 w-3">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                    </span>
+                    <Wifi size={16} /> Live Database Connected
+                    </>
+                ) : (
+                    <>
+                    <WifiOff size={16} /> Using Mock Data (Server Offline)
+                    </>
+                )}
+            </div>
+        </div>
       </div>
 
       {/* Stats Cards */}

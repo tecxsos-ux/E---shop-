@@ -13,6 +13,9 @@ import ProductDetails from './pages/ProductDetails';
 import Checkout from './pages/Checkout';
 import Profile from './pages/Profile';
 import Contact from './pages/Contact';
+import Login from './pages/Login';
+import Register from './pages/Register';
+
 import AdminDashboard from './pages/admin/Dashboard';
 import AdminProducts from './pages/admin/Products';
 import AdminOrders from './pages/admin/Orders';
@@ -35,6 +38,8 @@ const App: React.FC = () => {
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
                 
                 {/* Admin Routes */}
                 <Route path="/admin/dashboard" element={<AdminDashboard />} />

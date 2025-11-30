@@ -1,7 +1,7 @@
 
 import React, { useState, useContext, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ShoppingBag, Menu, X, User as UserIcon, LogOut, Search, LayoutDashboard, Globe, Moon, Sun, Download } from 'lucide-react';
+import { ShoppingBag, Menu, X, User as UserIcon, LogOut, Search, LayoutDashboard, Globe, Moon, Sun, Download, LogIn } from 'lucide-react';
 import { StoreContext } from '../context/StoreContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
@@ -15,13 +15,16 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [showInstallBtn, setShowInstallBtn] = useState(false);
+  const [cartBump, setCartBump] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
 
   const cartTotal = state.cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const totalItems = state.cart.reduce((a, b) => a + b.quantity, 0);
 
   const languages: { code: Language; label: string; flag: string }[] = [
     { code: 'en', label: 'English', flag: '🇺🇸' },
@@ -53,6 +56,14 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     return () => window.removeEventListener('beforeinstallprompt', handler);
   }, []);
 
+  // Trigger Cart Bump Animation when items change
+  useEffect(() => {
+     if (totalItems === 0) return;
+     setCartBump(true);
+     const timer = setTimeout(() => setCartBump(false), 300);
+     return () => clearTimeout(timer);
+  }, [totalItems]);
+
   const handleInstallClick = async () => {
     if (!deferredPrompt) return;
     deferredPrompt.prompt();
@@ -72,6 +83,12 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   const clearSearch = () => {
     dispatch({ type: 'SET_SEARCH', payload: '' });
+  };
+
+  const handleLogout = () => {
+      dispatch({ type: 'SET_USER', payload: null });
+      navigate('/login');
+      setIsUserMenuOpen(false);
   };
 
   return (
@@ -239,23 +256,57 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               </div>
 
               <div className="relative">
-                <button onClick={() => setIsCartOpen(true)} className="p-2 transition relative hover:text-indigo-600" style={{ color: headerStyle.color }}>
+                <button 
+                  onClick={() => setIsCartOpen(true)} 
+                  className={`p-2 transition-transform duration-300 relative hover:text-indigo-600 ${cartBump ? 'scale-125 text-indigo-600' : ''}`} 
+                  style={{ color: cartBump ? settings.primaryColor : headerStyle.color }}
+                >
                   <ShoppingBag className="w-6 h-6" />
                   {state.cart.length > 0 && (
                     <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-indigo-600 rounded-full">
-                      {state.cart.reduce((a, b) => a + b.quantity, 0)}
+                      {totalItems}
                     </span>
                   )}
                 </button>
               </div>
 
-              <div className="relative group">
-                <Link to="/profile">
-                  <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center hover:bg-indigo-50 hover:text-indigo-600 transition cursor-pointer" style={{ color: headerStyle.color }}>
-                    <UserIcon className="w-5 h-5" />
-                  </div>
-                </Link>
-              </div>
+              {/* User Menu */}
+              {state.user ? (
+                 <div className="relative">
+                    <button 
+                        onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                        className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center hover:bg-indigo-50 hover:text-indigo-600 transition cursor-pointer overflow-hidden border border-transparent hover:border-indigo-200" 
+                    >
+                         {state.user.avatar ? (
+                             <img src={state.user.avatar} alt={state.user.name} className="w-full h-full object-cover" />
+                         ) : (
+                             <UserIcon className="w-5 h-5" />
+                         )}
+                    </button>
+                    {isUserMenuOpen && (
+                        <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl py-2 border border-gray-100 dark:border-gray-700 z-50 animate-fade-in-up">
+                            <div className="px-4 py-2 border-b border-gray-100 dark:border-gray-700">
+                                <p className="text-sm font-bold text-gray-900 dark:text-white truncate">{state.user.name}</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{state.user.email}</p>
+                            </div>
+                            <Link to="/profile" className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700" onClick={() => setIsUserMenuOpen(false)}>
+                                {t('nav.myAccount')}
+                            </Link>
+                            <button 
+                                onClick={handleLogout}
+                                className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                            >
+                                {t('nav.signOut')}
+                            </button>
+                        </div>
+                    )}
+                 </div>
+              ) : (
+                  <Link to="/login" className="hidden sm:flex items-center gap-1 font-medium transition hover:text-indigo-600" style={{ color: headerStyle.color }}>
+                      <LogIn size={20} />
+                      <span className="hidden lg:inline">{t('nav.signIn')}</span>
+                  </Link>
+              )}
 
               <div className="md:hidden">
                 <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2" style={{ color: headerStyle.color }}>
@@ -272,9 +323,17 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
              <Link to="/" className="block text-gray-800 dark:text-gray-200 font-medium" onClick={() => setIsMobileMenuOpen(false)}>{t('nav.home')}</Link>
              <Link to="/shop" className="block text-gray-800 dark:text-gray-200 font-medium" onClick={() => setIsMobileMenuOpen(false)}>{t('nav.shop')}</Link>
              <Link to="/contact" className="block text-gray-800 dark:text-gray-200 font-medium" onClick={() => setIsMobileMenuOpen(false)}>{t('nav.contact')}</Link>
-             <Link to="/profile" className="block text-gray-800 dark:text-gray-200 font-medium" onClick={() => setIsMobileMenuOpen(false)}>{t('nav.myAccount')}</Link>
-             {state.user?.role === 'admin' && (
-               <Link to="/admin/dashboard" className="block text-amber-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Admin Dashboard</Link>
+             
+             {state.user ? (
+                 <>
+                    <Link to="/profile" className="block text-gray-800 dark:text-gray-200 font-medium" onClick={() => setIsMobileMenuOpen(false)}>{t('nav.myAccount')}</Link>
+                    {state.user?.role === 'admin' && (
+                        <Link to="/admin/dashboard" className="block text-amber-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Admin Dashboard</Link>
+                    )}
+                    <button onClick={handleLogout} className="block w-full text-left text-red-600 font-medium">{t('nav.signOut')}</button>
+                 </>
+             ) : (
+                 <Link to="/login" className="block text-indigo-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>{t('nav.signIn')}</Link>
              )}
              
              {showInstallBtn && (
@@ -416,18 +475,20 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 <ul className="space-y-2 opacity-70">
                   <li><Link to="/profile" className="hover:opacity-100 transition">{t('nav.myAccount')}</Link></li>
                   <li><Link to="/contact" className="hover:opacity-100 transition">{t('nav.contact')}</Link></li>
-                  <li><a href="#" className="hover:opacity-100 transition">{t('home.freeShipping')}</a></li>
-                  <li><a href="#" className="hover:opacity-100 transition">{t('home.returns')}</a></li>
                 </ul>
               </div>
             </div>
-            <div className="border-t pt-8 text-center text-sm opacity-50" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
-              &copy; 2024 {settings.brandName}. {t('nav.rights')}
+            <div className="border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center opacity-50 text-sm">
+              <p>&copy; {new Date().getFullYear()} {settings.brandName}. {t('nav.rights')}</p>
+              <div className="flex space-x-4 mt-4 md:mt-0">
+                <Globe size={16} />
+                <span>{currentLang?.label}</span>
+              </div>
             </div>
           </div>
         </footer>
-      </div>
-    );
-  };
-  
-  export default Layout;
+    </div>
+  );
+};
+
+export default Layout;

@@ -2,7 +2,7 @@
 import React, { useContext, useState } from 'react';
 import { StoreContext } from '../context/StoreContext';
 import { Link } from 'react-router-dom';
-import { Filter, ShoppingBag, Star, Heart, X, ShoppingCart, Eye, ArrowUpDown } from 'lucide-react';
+import { Filter, ShoppingBag, Star, Heart, X, ShoppingCart, Eye, ArrowUpDown, Check } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { Product } from '../types';
 
@@ -15,6 +15,9 @@ const Shop: React.FC = () => {
   // Quick View State
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [qvOptions, setQvOptions] = useState<{color: string; size: string}>({ color: '', size: '' });
+
+  // Adding Animation State (Track which IDs are adding)
+  const [addingIds, setAddingIds] = useState<string[]>([]);
 
   // Filter Logic
   const filteredProducts = state.products.filter(p => {
@@ -50,6 +53,10 @@ const Shop: React.FC = () => {
         return a.name.localeCompare(b.name);
       case 'name-desc':
         return b.name.localeCompare(a.name);
+      case 'brand-asc':
+        return a.brand.localeCompare(b.brand);
+      case 'brand-desc':
+        return b.brand.localeCompare(a.brand);
       case 'popularity':
       default:
         // Prioritize "New" items and then discounts for simulated popularity
@@ -67,6 +74,9 @@ const Shop: React.FC = () => {
     const defaultColor = product.variants?.find(v => v.type === 'color')?.options[0];
     const defaultSize = product.variants?.find(v => v.type === 'size')?.options[0];
 
+    // Trigger Animation
+    setAddingIds(prev => [...prev, product.id]);
+
     dispatch({
       type: 'ADD_TO_CART',
       payload: {
@@ -76,6 +86,11 @@ const Shop: React.FC = () => {
         selectedSize: defaultSize,
       }
     });
+
+    // Remove ID after timeout
+    setTimeout(() => {
+        setAddingIds(prev => prev.filter(id => id !== product.id));
+    }, 1000);
   };
 
   const handleQuickView = (e: React.MouseEvent, product: Product) => {
@@ -332,6 +347,8 @@ const Shop: React.FC = () => {
                        <option value="price-desc">{t('shop.sortPriceHighLow')}</option>
                        <option value="name-asc">{t('shop.sortNameAZ')}</option>
                        <option value="name-desc">{t('shop.sortNameZA')}</option>
+                       <option value="brand-asc">{t('shop.sortBrandAZ')}</option>
+                       <option value="brand-desc">{t('shop.sortBrandZA')}</option>
                     </select>
                 </div>
              </div>
@@ -429,6 +446,8 @@ const Shop: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                   {sortedProducts.map((product) => {
                     const isInWishlist = state.wishlist.includes(product.id);
+                    const isAdding = addingIds.includes(product.id);
+                    
                     return (
                     <div key={product.id} className="group relative bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden border border-gray-100">
                       
@@ -482,10 +501,11 @@ const Shop: React.FC = () => {
                            </button>
                            <button 
                                onClick={(e) => handleQuickAdd(e, product)}
-                               className="flex-1 bg-white/95 dark:bg-gray-900/95 backdrop-blur text-gray-900 dark:text-white h-12 rounded-xl shadow-lg font-bold text-sm hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-600 transition-all duration-300 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                               disabled={isAdding}
+                               className={`flex-1 backdrop-blur h-12 rounded-xl shadow-lg font-bold text-sm transition-all duration-300 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${isAdding ? 'bg-green-600 text-white' : 'bg-white/95 dark:bg-gray-900/95 text-gray-900 dark:text-white hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-600'}`}
                                aria-label={`${t('product.addToCart')} - ${product.name}`}
                            >
-                               <ShoppingCart size={18} /> {t('product.addToCart')}
+                               {isAdding ? <Check size={18} /> : <ShoppingCart size={18} />} {isAdding ? t('product.addedToCart') : t('product.addToCart')}
                            </button>
                         </div>
                       </div>
