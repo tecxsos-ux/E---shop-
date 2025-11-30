@@ -2,6 +2,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const nodemailer = require('nodemailer'); // Required for sending emails
 
 const app = express();
 const PORT = 5000;
@@ -103,6 +104,67 @@ const Slide = mongoose.model('Slide', SlideSchema);
 const Banner = mongoose.model('Banner', BannerSchema);
 const Settings = mongoose.model('Settings', SettingsSchema);
 
+// --- Email Helper Function ---
+const sendWelcomeEmail = async (user) => {
+    try {
+        // Fetch Settings for Brand Info
+        const settings = await Settings.findOne();
+        const brandName = settings?.brandName || 'LuxeMarket';
+        const brandLogo = settings?.brandLogo || 'https://cdn-icons-png.flaticon.com/512/3081/3081559.png';
+        const companyEmail = settings?.companyEmail || 'support@luxemarket.ai';
+        const companyAddress = settings?.companyAddress || '';
+
+        // CONFIGURATION: Replace with your actual SMTP details
+        // For Gmail, use App Passwords: https://myaccount.google.com/apppasswords
+        // IMPORTANT: If you do not configure this, emails will log an error but not crash the app.
+        const transporter = nodemailer.createTransport({
+            service: 'gmail', // Use 'gmail' or provide host/port
+            auth: {
+                user: 'your-email@gmail.com', // REPLACE THIS
+                pass: 'your-app-password'      // REPLACE THIS
+            }
+        });
+
+        const mailOptions = {
+            from: `"${brandName}" <${companyEmail}>`,
+            to: user.email,
+            subject: `Welcome to ${brandName}!`,
+            html: `
+                <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden;">
+                    <div style="text-align: center; padding: 40px 20px; background-color: #f9fafb; border-bottom: 1px solid #e5e7eb;">
+                        <img src="${brandLogo}" alt="${brandName}" style="max-height: 60px; width: auto; display: block; margin: 0 auto;" />
+                    </div>
+                    <div style="padding: 40px 30px;">
+                        <h1 style="color: #111827; font-size: 24px; font-weight: bold; margin-bottom: 20px; text-align: center;">Welcome, ${user.name}!</h1>
+                        <p style="color: #4b5563; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
+                            Thank you for creating an account with <strong>${brandName}</strong>. We are thrilled to welcome you to our exclusive community of shoppers.
+                        </p>
+                        <p style="color: #4b5563; font-size: 16px; line-height: 1.6; margin-bottom: 30px;">
+                            You can now track your orders, save your wishlist, and enjoy a seamless checkout experience.
+                        </p>
+                        <div style="text-align: center;">
+                            <a href="http://localhost:3000" style="display: inline-block; background-color: #4f46e5; color: #ffffff; padding: 14px 30px; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 16px;">Start Shopping</a>
+                        </div>
+                    </div>
+                    <div style="background-color: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #e5e7eb;">
+                        <p style="color: #9ca3af; font-size: 12px; margin: 0;">
+                            &copy; ${new Date().getFullYear()} ${brandName}. All rights reserved.<br>
+                            ${companyAddress}
+                        </p>
+                    </div>
+                </div>
+            `
+        };
+
+        await transporter.sendMail(mailOptions);
+        console.log(`📧 Welcome email sent successfully to ${user.email}`);
+
+    } catch (error) {
+        // Non-blocking error logging
+        console.error("⚠️ Email sending failed (Check SMTP Config in server.js):", error.message);
+    }
+};
+
 // --- API Routes ---
 
 // Health Check
@@ -162,6 +224,10 @@ app.get('/api/users', async (req, res) => {
 app.post('/api/users', async (req, res) => {
   const newUser = new User(req.body);
   await newUser.save();
+  
+  // Send Welcome Email (Fire and forget)
+  sendWelcomeEmail(newUser);
+
   res.json(newUser);
 });
 

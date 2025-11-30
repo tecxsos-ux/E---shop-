@@ -449,10 +449,10 @@ const Shop: React.FC = () => {
                     const isAdding = addingIds.includes(product.id);
                     
                     return (
-                    <div key={product.id} className="group relative bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden border border-gray-100">
+                    <div key={product.id} className="group relative bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-300 flex flex-col overflow-hidden border border-gray-100 dark:border-gray-700">
                       
                       {/* Image Container */}
-                      <div className="relative aspect-[4/5] overflow-hidden bg-gray-100">
+                      <div className="relative aspect-[4/5] overflow-hidden bg-gray-100 dark:bg-gray-700">
                         <Link to={`/product/${product.id}`} className="block w-full h-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500" aria-label={`${t('home.viewProduct')} ${product.name}`}>
                             <img 
                                 src={product.image} 
@@ -462,10 +462,13 @@ const Shop: React.FC = () => {
                             />
                         </Link>
                         
+                        {/* Overlay Gradient */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        
                         {/* Badges */}
                         <div className="absolute top-3 left-3 flex flex-col gap-2 z-10 pointer-events-none">
                             {product.isNew && (
-                                <span className="bg-gray-900/90 backdrop-blur text-white text-[10px] px-2.5 py-1 uppercase font-bold tracking-widest rounded-lg shadow-sm">
+                                <span className="bg-white/90 dark:bg-gray-900/90 backdrop-blur text-gray-900 dark:text-white text-[10px] px-2.5 py-1 uppercase font-bold tracking-widest rounded-lg shadow-sm">
                                 {t('home.new')}
                                 </span>
                             )}
@@ -478,7 +481,7 @@ const Shop: React.FC = () => {
 
                         {/* Wishlist Button */}
                         <button 
-                            className={`absolute top-3 right-3 p-2.5 backdrop-blur rounded-xl transition-all shadow-sm z-20 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 focus:opacity-100 focus:translate-y-0 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${isInWishlist ? 'bg-red-50 text-red-500' : 'bg-white/90 dark:bg-gray-900/90 text-gray-400 hover:text-red-500 hover:bg-white dark:hover:bg-gray-800'}`}
+                            className={`absolute top-3 right-3 w-10 h-10 flex items-center justify-center backdrop-blur rounded-full transition-all shadow-sm z-20 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 focus:opacity-100 focus:translate-y-0 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${isInWishlist ? 'bg-white text-red-500' : 'bg-white/90 dark:bg-gray-900/90 text-gray-400 hover:text-red-500 hover:bg-white dark:hover:bg-gray-800'}`}
                             onClick={(e) => {
                                 e.preventDefault();
                                 dispatch({ type: 'TOGGLE_WISHLIST', payload: product.id });
@@ -512,31 +515,31 @@ const Shop: React.FC = () => {
 
                       {/* Content */}
                       <div className="p-5 flex-grow flex flex-col gap-2">
-                        <div className="flex justify-between items-center">
-                             <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider bg-indigo-50 px-2 py-1 rounded-md">
+                        <div className="flex justify-between items-center mb-1">
+                             <div className="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">
                                  {product.brand}
-                             </p>
+                             </div>
                              <div className="flex items-center gap-1" aria-label="Rated 4.8 out of 5 stars">
-                                <Star size={14} className="text-amber-400 fill-current" aria-hidden="true" />
-                                <span className="text-xs text-gray-600 font-bold">4.8</span>
+                                <Star size={12} className="text-amber-400 fill-current" aria-hidden="true" />
+                                <span className="text-xs text-gray-500 dark:text-gray-400 font-bold">4.8</span>
                              </div>
                         </div>
                         
-                        <h3 className="text-lg font-bold text-gray-900 leading-snug group-hover:text-indigo-600 transition-colors line-clamp-2 min-h-[3rem]">
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-white leading-tight group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2 min-h-[3rem]">
                             <Link to={`/product/${product.id}`} className="focus:outline-none focus:underline">
                                 {product.name}
                             </Link>
                         </h3>
                         
-                        <div className="mt-auto pt-3 flex items-center justify-between border-t border-gray-50">
-                          <div>
+                        <div className="mt-auto pt-3 flex items-center justify-between border-t border-gray-50 dark:border-gray-700">
+                          <div className="flex flex-col">
                              {product.discount ? (
-                                <div className="flex items-baseline gap-2">
-                                    <span className="text-lg font-bold text-red-600" aria-label={`Sale price $${product.price}`}>${product.price}</span>
-                                    <span className="text-sm text-gray-400 line-through" aria-label={`Original price $${(product.price * 1.1).toFixed(2)}`}>${(product.price * 1.1).toFixed(2)}</span>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-lg font-bold text-red-600 dark:text-red-400" aria-label={`Sale price $${product.price}`}>${product.price}</span>
+                                    <span className="text-xs text-gray-400 line-through" aria-label={`Original price $${(product.price * 1.1).toFixed(2)}`}>${(product.price * 1.1).toFixed(2)}</span>
                                 </div>
                              ) : (
-                                <span className="text-lg font-bold text-gray-900" aria-label={`Price $${product.price}`}>${product.price}</span>
+                                <span className="text-lg font-bold text-gray-900 dark:text-white" aria-label={`Price $${product.price}`}>${product.price}</span>
                              )}
                           </div>
                           <span className="text-xs text-gray-400 font-medium">{product.category}</span>

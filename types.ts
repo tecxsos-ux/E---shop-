@@ -16,7 +16,7 @@ export interface Product {
 }
 
 export interface Variant {
-  type: 'color' | 'size';
+  type: string; // Changed from 'color' | 'size' to string to support custom types like "Material", "Style"
   options: string[];
 }
 
@@ -24,6 +24,9 @@ export interface CartItem extends Product {
   quantity: number;
   selectedColor?: string;
   selectedSize?: string;
+  // For dynamic variants, we might ideally use a map, but keeping these for backward compat
+  // and ease of use in the current checkout flow.
+  selectedVariants?: Record<string, string>; 
 }
 
 export interface User {
