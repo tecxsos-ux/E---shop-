@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, ShoppingBag, ShoppingCart, Users, Settings, Images, Layers } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, ShoppingCart, Users, Settings, Images, Layers, MessageSquare } from 'lucide-react';
 
 const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
@@ -12,6 +12,7 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     { name: 'Categories', path: '/admin/categories', icon: <Layers size={20} /> },
     { name: 'Orders', path: '/admin/orders', icon: <ShoppingCart size={20} /> },
     { name: 'Users & Location', path: '/admin/users', icon: <Users size={20} /> },
+    { name: 'Reviews', path: '/admin/reviews', icon: <MessageSquare size={20} /> },
     { name: 'Home Page Settings', path: '/admin/slider', icon: <Images size={20} /> },
     { name: 'Settings', path: '/admin/settings', icon: <Settings size={20} /> }, 
   ];

@@ -23,6 +23,7 @@ import AdminSliderSettings from './pages/admin/SliderSettings';
 import AdminCategories from './pages/admin/Categories';
 import AdminSettings from './pages/admin/Settings';
 import AdminUsers from './pages/admin/Users';
+import AdminReviews from './pages/admin/Reviews';
 
 const App: React.FC = () => {
   return (
@@ -49,6 +50,7 @@ const App: React.FC = () => {
                 <Route path="/admin/users" element={<AdminUsers />} />
                 <Route path="/admin/slider" element={<AdminSliderSettings />} />
                 <Route path="/admin/settings" element={<AdminSettings />} />
+                <Route path="/admin/reviews" element={<AdminReviews />} />
                 
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>

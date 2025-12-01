@@ -41,6 +41,16 @@ export interface User {
   status?: 'active' | 'inactive';
 }
 
+export interface Review {
+  id: string;
+  productId: string;
+  userId: string;
+  userName: string;
+  rating: number;
+  comment: string;
+  date: string;
+}
+
 export enum OrderStatus {
   Processing = 'Processing',
   Shipped = 'Shipped',

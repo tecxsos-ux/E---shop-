@@ -107,7 +107,13 @@ export const translations = {
       freeReturns: "Free Returns",
       warranty: "2 Year Warranty",
       notFound: "Product not found.",
-      goBack: "Go Back"
+      goBack: "Go Back",
+      writeReview: "Write a Review",
+      rating: "Rating",
+      comment: "Comment",
+      submitReview: "Submit Review",
+      noReviews: "No reviews yet. Be the first to write one!",
+      loginToReview: "Please log in to write a review."
     },
     checkout: {
       title: "Checkout",
@@ -268,7 +274,13 @@ export const translations = {
       freeReturns: "Retours Gratuits",
       warranty: "Garantie 2 Ans",
       notFound: "Produit non trouvé.",
-      goBack: "Retour"
+      goBack: "Retour",
+      writeReview: "Écrire un avis",
+      rating: "Évaluation",
+      comment: "Commentaire",
+      submitReview: "Soumettre l'avis",
+      noReviews: "Aucun avis pour le moment. Soyez le premier à en écrire un !",
+      loginToReview: "Veuillez vous connecter pour écrire un avis."
     },
     checkout: {
       title: "Paiement",
@@ -429,7 +441,13 @@ export const translations = {
       freeReturns: "Kostenlose Rückgabe",
       warranty: "2 Jahre Garantie",
       notFound: "Produkt nicht gefunden.",
-      goBack: "Zurück"
+      goBack: "Zurück",
+      writeReview: "Bewertung schreiben",
+      rating: "Bewertung",
+      comment: "Kommentar",
+      submitReview: "Bewertung abschicken",
+      noReviews: "Noch keine Bewertungen. Seien Sie der Erste!",
+      loginToReview: "Bitte melden Sie sich an, um eine Bewertung zu schreiben."
     },
     checkout: {
       title: "Kasse",
@@ -590,7 +608,13 @@ export const translations = {
       freeReturns: "Resi gratuiti",
       warranty: "Garanzia 2 anni",
       notFound: "Prodotto non trovato.",
-      goBack: "Torna indietro"
+      goBack: "Torna indietro",
+      writeReview: "Scrivi una recensione",
+      rating: "Valutazione",
+      comment: "Commento",
+      submitReview: "Invia recensione",
+      noReviews: "Nessuna recensione ancora. Sii il primo!",
+      loginToReview: "Accedi per scrivere una recensione."
     },
     checkout: {
       title: "Checkout",

@@ -1,6 +1,6 @@
 
 import React, { createContext, useReducer, useEffect } from 'react';
-import { Product, CartItem, User, Order, Category, OrderStatus, Slide, Banner, Settings } from '../types';
+import { Product, CartItem, User, Order, Category, OrderStatus, Slide, Banner, Settings, Review } from '../types';
 
 interface State {
   products: Product[];
@@ -10,6 +10,7 @@ interface State {
   user: User | null; // Current logged in user
   users: User[]; // All registered users (for admin)
   orders: Order[];
+  reviews: Review[];
   slides: Slide[];
   banners: Banner[];
   filters: {
@@ -85,6 +86,27 @@ const initialCategories: Category[] = [
   { id: '1', name: 'Electronics', subCategories: ['Audio', 'Home', 'Mobile'], image: 'https://picsum.photos/600/800?random=10' },
   { id: '2', name: 'Clothing', subCategories: ['Outerwear', 'T-Shirts', 'Pants'], image: 'https://picsum.photos/600/800?random=11' },
   { id: '3', name: 'Accessories', subCategories: ['Watches', 'Bags', 'Jewelry'], image: 'https://picsum.photos/600/800?random=12' },
+];
+
+const initialReviews: Review[] = [
+  {
+    id: 'r1',
+    productId: '1',
+    userId: 'u2',
+    userName: 'Sophie Dupont',
+    rating: 5,
+    comment: 'Absolutely love this watch! Simple and elegant.',
+    date: '2024-03-12T10:00:00Z'
+  },
+  {
+    id: 'r2',
+    productId: '1',
+    userId: 'u_krish',
+    userName: 'Krish Admin',
+    rating: 4,
+    comment: 'Great value for money, though the strap is a bit stiff at first.',
+    date: '2024-03-15T14:30:00Z'
+  }
 ];
 
 const initialSlides: Slide[] = [
@@ -197,6 +219,7 @@ const initialState: State = {
   user: null,
   users: initialUsers,
   orders: [],
+  reviews: initialReviews,
   slides: initialSlides,
   banners: initialBanners,
   filters: {
@@ -224,6 +247,8 @@ type Action =
   | { type: 'UPDATE_PRODUCT'; payload: Product }
   | { type: 'ADD_ORDER'; payload: Order }
   | { type: 'UPDATE_ORDER_STATUS'; payload: { id: string; status: OrderStatus } }
+  | { type: 'ADD_REVIEW'; payload: Review }
+  | { type: 'DELETE_REVIEW'; payload: string }
   | { type: 'SET_FILTER_CATEGORY'; payload: string | null }
   | { type: 'SET_FILTER_SUBCATEGORY'; payload: string | null }
   | { type: 'SET_SEARCH'; payload: string }
@@ -327,6 +352,12 @@ const storeReducer = (state: State, action: Action): State => {
         ...state,
         orders: state.orders.map(o => o.id === action.payload.id ? { ...o, status: action.payload.status } : o)
       };
+    case 'ADD_REVIEW':
+      sync('reviews', 'POST', action.payload);
+      return { ...state, reviews: [action.payload, ...state.reviews] };
+    case 'DELETE_REVIEW':
+      sync(`reviews/${action.payload}`, 'DELETE', {});
+      return { ...state, reviews: state.reviews.filter(r => r.id !== action.payload) };
     case 'SET_FILTER_CATEGORY':
       return { ...state, filters: { ...state.filters, category: action.payload, subCategory: null } };
     case 'SET_FILTER_SUBCATEGORY':
@@ -375,13 +406,14 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       dispatch({ type: 'SET_DB_STATUS', payload: true });
 
       // 2. Fetch all data in parallel
-      const [productsRes, catsRes, slidesRes, usersRes, ordersRes, settingsRes] = await Promise.all([
+      const [productsRes, catsRes, slidesRes, usersRes, ordersRes, settingsRes, reviewsRes] = await Promise.all([
          fetch(`${API}/products`),
          fetch(`${API}/categories`),
          fetch(`${API}/slides`),
          fetch(`${API}/users`),
          fetch(`${API}/orders`),
-         fetch(`${API}/settings`)
+         fetch(`${API}/settings`),
+         fetch(`${API}/reviews`)
       ]);
 
       const products = await productsRes.json();
@@ -390,6 +422,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const users = await usersRes.json();
       const orders = await ordersRes.json();
       const settings = await settingsRes.json();
+      const reviews = await reviewsRes.json();
 
       dispatch({
         type: 'LOAD_DATA',
@@ -399,6 +432,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           slides: slides.length > 0 ? slides : initialSlides,
           users: users.length > 0 ? users : initialUsers,
           orders: orders.length > 0 ? orders : [],
+          reviews: reviews.length > 0 ? reviews : initialReviews,
           settings: Object.keys(settings).length > 0 ? settings : defaultSettings
         }
       });
