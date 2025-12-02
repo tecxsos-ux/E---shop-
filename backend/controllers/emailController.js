@@ -5,9 +5,9 @@ const Settings = require('../models/Settings');
 const sendWelcomeEmail = async (user) => {
     try {
         const settings = await Settings.findOne();
-        const brandName = settings?.brandName || 'LuxeMarket';
+        const brandName = settings?.brandName || 'Phallbun';
         const brandLogo = settings?.brandLogo || 'https://cdn-icons-png.flaticon.com/512/3081/3081559.png';
-        const companyEmail = settings?.companyEmail || 'support@luxemarket.ai';
+        const companyEmail = settings?.companyEmail || 'support@phallbun.com';
         const companyAddress = settings?.companyAddress || '';
 
         // CONFIGURATION: Replace with your actual SMTP details

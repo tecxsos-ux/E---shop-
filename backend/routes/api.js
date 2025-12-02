@@ -24,6 +24,52 @@ router.get('/health', (req, res) => {
     }
 });
 
+// --- Analytics Routes ---
+router.get('/analytics/revenue', async (req, res) => {
+    try {
+        const { period } = req.query; // day, week, month, year
+        let dateFormat;
+        
+        // MongoDB Date Format Strings
+        switch(period) {
+            case 'day': dateFormat = "%Y-%m-%d"; break;
+            case 'week': dateFormat = "%Y-W%V"; break; // Year-Week (ISO)
+            case 'year': dateFormat = "%Y"; break;
+            case 'month': 
+            default: dateFormat = "%Y-%m"; break;
+        }
+
+        const stats = await Order.aggregate([
+            {
+                // Convert string ISO date to Date object for processing
+                $addFields: {
+                    convertedDate: { $toDate: "$date" }
+                }
+            },
+            {
+                $group: {
+                    _id: { $dateToString: { format: dateFormat, date: "$convertedDate" } },
+                    sales: { $sum: "$total" },
+                    ordersCount: { $sum: 1 }
+                }
+            },
+            { $sort: { _id: 1 } } // Sort chronologically
+        ]);
+
+        // Transform for Frontend
+        const formatted = stats.map(item => ({
+            name: item._id,
+            sales: parseFloat(item.sales.toFixed(2)),
+            count: item.ordersCount
+        }));
+
+        res.json(formatted);
+    } catch (e) {
+        console.error("Analytics Error:", e);
+        res.status(500).json({ error: e.message });
+    }
+});
+
 // --- Products Routes ---
 router.get('/products', async (req, res) => {
   try {

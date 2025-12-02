@@ -218,7 +218,7 @@ export const generateInvoice = (order: Order, settings: Settings) => {
   doc.setFont("helvetica", "normal");
   doc.setTextColor(150);
   doc.text("Thank you for your business!", 105, 280, { align: "center" });
-  doc.text(`${settings.companyName || settings.brandName} - ${settings.companyEmail || 'contact@luxemarket.ai'}`, 105, 285, { align: "center" });
+  doc.text(`${settings.companyName || settings.brandName || 'Phallbun'} - ${settings.companyEmail || 'support@phallbun.com'}`, 105, 285, { align: "center" });
 
   doc.save(`invoice_${order.id}.pdf`);
 };

@@ -48,7 +48,7 @@ const ProductDetails: React.FC = () => {
   // Filter Related Products
   const relatedProducts = state.products
     .filter(p => p.category === product.category && p.id !== product.id)
-    .slice(0, 4);
+    .slice(0, 8); // Increased slice to show scrolling capability
 
   const handleAddToCart = () => {
     if (sizeVariant && !selectedSize) {
@@ -369,13 +369,18 @@ const ProductDetails: React.FC = () => {
          </div>
       </div>
 
-      {/* Related Products Section */}
+      {/* Related Products Section (Carousel) */}
       {relatedProducts.length > 0 && (
         <div className="border-t border-gray-200 dark:border-gray-700 pt-12 animate-fade-in-up">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-8">{t('product.relatedProducts')}</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            
+            <div className="flex overflow-x-auto gap-6 pb-8 snap-x -mx-4 px-4 sm:mx-0 sm:px-0">
                 {relatedProducts.map(relProduct => (
-                    <Link key={relProduct.id} to={`/product/${relProduct.id}`} className="group block bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl overflow-hidden hover:shadow-xl hover:shadow-indigo-100 dark:hover:shadow-indigo-900/20 transition-all duration-300 hover:-translate-y-1">
+                    <Link 
+                        key={relProduct.id} 
+                        to={`/product/${relProduct.id}`} 
+                        className="group block bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl overflow-hidden hover:shadow-xl hover:shadow-indigo-100 dark:hover:shadow-indigo-900/20 transition-all duration-300 hover:-translate-y-1 min-w-[220px] md:min-w-[260px] snap-start"
+                    >
                         <div className="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-700">
                              <img src={relProduct.image} alt={relProduct.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                              

@@ -192,7 +192,7 @@ const initialUsers: User[] = [
 ];
 
 const defaultSettings: Settings = {
-    brandName: 'LuxeMarket',
+    brandName: 'Phallbun',
     brandLogo: '',
     primaryColor: '#4f46e5',
     secondaryColor: '#d97706',
@@ -203,11 +203,11 @@ const defaultSettings: Settings = {
     footerTextColor: '#ffffff',
     taxRate: 8,
     shippingCost: 15,
-    companyName: 'LuxeMarket Inc.',
-    companyAddress: '123 Luxury Lane, Suite 100, Beverly Hills, CA 90210',
+    companyName: 'Phallbun Online Sales',
+    companyAddress: '123 E-Commerce Blvd, Digital City, 90210',
     companyTaxId: 'US-88392102',
     companyPhone: '+1 (555) 123-4567',
-    companyEmail: 'support@luxemarket.ai',
+    companyEmail: 'support@phallbun.com',
     companyWorkingHours: 'Mon - Fri: 9:00 AM - 6:00 PM'
 };
 

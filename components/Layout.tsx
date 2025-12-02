@@ -1,7 +1,7 @@
 
 import React, { useState, useContext, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ShoppingBag, Menu, X, User as UserIcon, LogOut, Search, LayoutDashboard, Globe, Moon, Sun, Download, LogIn } from 'lucide-react';
+import { ShoppingBag, Menu, X, User as UserIcon, LogOut, Search, LayoutDashboard, Globe, Moon, Sun, Download, LogIn, UserPlus, ArrowRight, ShieldCheck } from 'lucide-react';
 import { StoreContext } from '../context/StoreContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
@@ -19,6 +19,9 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [showInstallBtn, setShowInstallBtn] = useState(false);
   const [cartBump, setCartBump] = useState(false);
+  
+  // Auth Modal State
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -79,6 +82,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     dispatch({ type: 'SET_FILTER_CATEGORY', payload: null });
     dispatch({ type: 'SET_FILTER_SUBCATEGORY', payload: null });
     navigate('/shop');
+    setIsMobileMenuOpen(false); // Close mobile menu if open
   };
 
   const clearSearch = () => {
@@ -89,6 +93,29 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       dispatch({ type: 'SET_USER', payload: null });
       navigate('/login');
       setIsUserMenuOpen(false);
+      setIsMobileMenuOpen(false);
+  };
+
+  const handleCheckout = () => {
+    if (state.user) {
+      // User is logged in, proceed
+      setIsCartOpen(false);
+      navigate('/checkout');
+    } else {
+      // User is NOT logged in, show prompt
+      setIsCartOpen(false);
+      setIsAuthModalOpen(true);
+    }
+  };
+
+  const handleGuestCheckout = () => {
+    setIsAuthModalOpen(false);
+    navigate('/checkout');
+  };
+
+  const handleAuthNavigation = (path: string) => {
+    setIsAuthModalOpen(false);
+    navigate(path);
   };
 
   return (
@@ -159,11 +186,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 {settings.brandLogo ? (
                    <img src={settings.brandLogo} alt={settings.brandName} className="h-8 w-auto object-contain" />
                 ) : (
-                   settings.brandName === 'LuxeMarket' ? (
-                     <>Luxe<span className="text-indigo-600">Market</span></>
-                   ) : (
-                     <span>{settings.brandName}</span>
-                   )
+                   <span>{settings.brandName}</span>
                 )}
               </Link>
             </div>
@@ -195,7 +218,12 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                   }}
                   className="pl-10 pr-8 py-2 border border-gray-200 dark:border-gray-600 rounded-full text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 w-64 transition-all text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-700 placeholder-gray-400 dark:placeholder-gray-500"
                 />
-                <Search className="absolute left-3 top-2.5 text-gray-400 w-4 h-4" />
+                <button 
+                  onClick={handleSearchSubmit}
+                  className="absolute left-3 top-2.5 text-gray-400 w-4 h-4 hover:text-indigo-600"
+                >
+                    <Search size={16} />
+                </button>
                 {state.filters.search && (
                    <button 
                      onClick={clearSearch}
@@ -290,8 +318,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                                 <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{state.user.email}</p>
                             </div>
                             <Link to="/profile" className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700" onClick={() => setIsUserMenuOpen(false)}>
-                                {t('nav.myAccount')}
-                            </Link>
+                                {t('nav.myAccount')}</Link>
                             <button 
                                 onClick={handleLogout}
                                 className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
@@ -320,6 +347,23 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <div className="md:hidden bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 py-4 px-4 space-y-3">
+             {/* Mobile Search Bar */}
+             <div className="relative mb-4">
+                 <input 
+                    type="text" 
+                    placeholder={t('nav.search')} 
+                    value={state.filters.search}
+                    onChange={(e) => dispatch({ type: 'SET_SEARCH', payload: e.target.value })}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            handleSearchSubmit();
+                        }
+                    }}
+                    className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                 />
+                 <Search className="absolute left-3 top-2.5 text-gray-400 w-5 h-5" />
+             </div>
+
              <Link to="/" className="block text-gray-800 dark:text-gray-200 font-medium" onClick={() => setIsMobileMenuOpen(false)}>{t('nav.home')}</Link>
              <Link to="/shop" className="block text-gray-800 dark:text-gray-200 font-medium" onClick={() => setIsMobileMenuOpen(false)}>{t('nav.shop')}</Link>
              <Link to="/contact" className="block text-gray-800 dark:text-gray-200 font-medium" onClick={() => setIsMobileMenuOpen(false)}>{t('nav.contact')}</Link>
@@ -423,16 +467,64 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                   </div>
                   <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">{t('nav.shippingCalc')}</p>
                   <div className="mt-6">
-                    <Link
-                      to="/checkout"
-                      onClick={() => setIsCartOpen(false)}
-                      className="flex justify-center items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition"
+                    <button
+                      onClick={handleCheckout}
+                      className="w-full flex justify-center items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition"
                     >
                       {t('nav.checkout')}
-                    </Link>
+                    </button>
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Auth Required Modal */}
+        {isAuthModalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-gray-900/60 backdrop-blur-sm" onClick={() => setIsAuthModalOpen(false)}></div>
+            <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md p-8 animate-fade-in-up">
+               <button 
+                  onClick={() => setIsAuthModalOpen(false)}
+                  className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+               >
+                 <X size={20} />
+               </button>
+
+               <div className="text-center mb-8">
+                  <div className="w-16 h-16 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <ShieldCheck size={32} />
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Account Required</h2>
+                  <p className="text-gray-500 dark:text-gray-400">Please sign in or create an account to proceed with your order and track it easily.</p>
+               </div>
+
+               <div className="space-y-4">
+                  <button 
+                    onClick={() => handleAuthNavigation('/login')}
+                    className="w-full flex items-center justify-center gap-3 bg-indigo-600 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 transition shadow-lg shadow-indigo-200 dark:shadow-none"
+                  >
+                     <LogIn size={20} /> Sign In
+                  </button>
+                  
+                  <button 
+                    onClick={() => handleAuthNavigation('/register')}
+                    className="w-full flex items-center justify-center gap-3 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white py-3 rounded-xl font-bold hover:bg-gray-50 dark:hover:bg-gray-600 transition"
+                  >
+                     <UserPlus size={20} /> Create Account
+                  </button>
+               </div>
+
+               <div className="mt-8 pt-6 border-t border-gray-100 dark:border-gray-700 text-center">
+                  <p className="text-xs text-gray-400 mb-2 uppercase font-bold tracking-wider">Or continue as guest</p>
+                  <button 
+                    onClick={handleGuestCheckout}
+                    className="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white flex items-center justify-center gap-1 mx-auto"
+                  >
+                    Guest Checkout <ArrowRight size={14} />
+                  </button>
+               </div>
             </div>
           </div>
         )}
@@ -451,11 +543,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                     {settings.brandLogo ? (
                        <img src={settings.brandLogo} alt={settings.brandName} className="h-8 w-auto grayscale brightness-200" />
                     ) : (
-                       settings.brandName === 'LuxeMarket' ? (
-                          <>Luxe<span className="text-indigo-600">Market</span></>
-                       ) : (
-                          <span style={{ color: settings.footerTextColor || '#ffffff' }}>{settings.brandName}</span>
-                       )
+                       <span style={{ color: settings.footerTextColor || '#ffffff' }}>{settings.brandName}</span>
                     )}
                 </h3>
                 <p className="opacity-70 max-w-sm">
