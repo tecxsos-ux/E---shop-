@@ -1,6 +1,6 @@
 
 import React, { createContext, useReducer, useEffect } from 'react';
-import { Product, CartItem, User, Order, Category, OrderStatus, Slide, Banner, Settings, Review } from '../types';
+import { Product, CartItem, User, Order, Category, OrderStatus, Slide, Banner, Settings, Review, PromoBanner } from '../types';
 
 interface State {
   products: Product[];
@@ -13,6 +13,7 @@ interface State {
   reviews: Review[];
   slides: Slide[];
   banners: Banner[];
+  promoBanners: PromoBanner[]; // New state for small banners
   filters: {
     category: string | null;
     subCategory: string | null;
@@ -158,6 +159,33 @@ const initialBanners: Banner[] = [
   }
 ];
 
+const initialPromoBanners: PromoBanner[] = [
+  {
+    id: "promo1",
+    title: "Summer Essentials",
+    description: "Up to 30% off",
+    image: "https://picsum.photos/600/300?random=88",
+    link: "/shop",
+    textColorClass: "text-yellow-400"
+  },
+  {
+    id: "promo2",
+    title: "Tech Upgrades",
+    description: "New gadgets added",
+    image: "https://picsum.photos/600/300?random=89",
+    link: "/shop",
+    textColorClass: "text-cyan-400"
+  },
+  {
+    id: "promo3",
+    title: "Luxury Watches",
+    description: "Timeless elegance",
+    image: "https://picsum.photos/600/300?random=90",
+    link: "/shop",
+    textColorClass: "text-purple-400"
+  }
+];
+
 const initialUsers: User[] = [
   { 
     id: 'u1', 
@@ -208,7 +236,8 @@ const defaultSettings: Settings = {
     companyTaxId: 'US-88392102',
     companyPhone: '+1 (555) 123-4567',
     companyEmail: 'support@phallbun.com',
-    companyWorkingHours: 'Mon - Fri: 9:00 AM - 6:00 PM'
+    companyWorkingHours: 'Mon - Fri: 9:00 AM - 6:00 PM',
+    whatsappNumber: ''
 };
 
 const initialState: State = {
@@ -222,6 +251,7 @@ const initialState: State = {
   reviews: initialReviews,
   slides: initialSlides,
   banners: initialBanners,
+  promoBanners: initialPromoBanners,
   filters: {
     category: null,
     subCategory: null,
@@ -258,6 +288,7 @@ type Action =
   | { type: 'ADD_CATEGORY'; payload: Category }
   | { type: 'DELETE_CATEGORY'; payload: string }
   | { type: 'UPDATE_BANNER'; payload: Banner }
+  | { type: 'UPDATE_PROMO_BANNER'; payload: PromoBanner }
   | { type: 'UPDATE_SETTINGS'; payload: Settings }
   | { type: 'SET_DB_STATUS'; payload: boolean };
 
@@ -378,6 +409,8 @@ const storeReducer = (state: State, action: Action): State => {
       return { ...state, categories: state.categories.filter(c => c.id !== action.payload) };
     case 'UPDATE_BANNER':
       return { ...state, banners: state.banners.map(b => b.id === action.payload.id ? action.payload : b) };
+    case 'UPDATE_PROMO_BANNER':
+      return { ...state, promoBanners: state.promoBanners.map(b => b.id === action.payload.id ? action.payload : b) };
     case 'UPDATE_SETTINGS':
       sync('settings', 'POST', action.payload);
       return { ...state, settings: action.payload };
@@ -406,14 +439,15 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       dispatch({ type: 'SET_DB_STATUS', payload: true });
 
       // 2. Fetch all data in parallel
-      const [productsRes, catsRes, slidesRes, usersRes, ordersRes, settingsRes, reviewsRes] = await Promise.all([
+      const [productsRes, catsRes, slidesRes, usersRes, ordersRes, settingsRes, reviewsRes, promoRes] = await Promise.all([
          fetch(`${API}/products`),
          fetch(`${API}/categories`),
          fetch(`${API}/slides`),
          fetch(`${API}/users`),
          fetch(`${API}/orders`),
          fetch(`${API}/settings`),
-         fetch(`${API}/reviews`)
+         fetch(`${API}/reviews`),
+         fetch(`${API}/promo-banners`)
       ]);
 
       const products = await productsRes.json();
@@ -423,6 +457,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const orders = await ordersRes.json();
       const settings = await settingsRes.json();
       const reviews = await reviewsRes.json();
+      const promoBanners = await promoRes.json();
 
       dispatch({
         type: 'LOAD_DATA',
@@ -433,7 +468,8 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           users: users.length > 0 ? users : initialUsers,
           orders: orders.length > 0 ? orders : [],
           reviews: reviews.length > 0 ? reviews : initialReviews,
-          settings: Object.keys(settings).length > 0 ? settings : defaultSettings
+          settings: Object.keys(settings).length > 0 ? settings : defaultSettings,
+          promoBanners: promoBanners.length > 0 ? promoBanners : initialPromoBanners
         }
       });
       console.log("✅ Data successfully loaded from Backend.");

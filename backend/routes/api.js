@@ -7,12 +7,12 @@ const mongoose = require('mongoose');
 const { Product, Category } = require('../models/Product');
 const Order = require('../models/Order');
 const User = require('../models/User');
-const { Slide, Banner } = require('../models/Content');
+const { Slide, Banner, PromoBanner } = require('../models/Content');
 const Settings = require('../models/Settings');
 const Review = require('../models/Review');
 
 // Controllers
-const { sendWelcomeEmail } = require('../controllers/emailController');
+const { sendWelcomeEmail, sendOrderInvoiceEmail } = require('../controllers/emailController');
 
 // --- Health Check ---
 router.get('/health', (req, res) => {
@@ -103,9 +103,17 @@ router.get('/orders', async (req, res) => {
 });
 
 router.post('/orders', async (req, res) => {
-  const newOrder = new Order(req.body);
-  await newOrder.save();
-  res.json(newOrder);
+  try {
+      const newOrder = new Order(req.body);
+      await newOrder.save();
+      
+      // Trigger Email Notification (Non-blocking)
+      sendOrderInvoiceEmail(newOrder).catch(err => console.error("Email trigger failed", err));
+
+      res.json(newOrder);
+  } catch (e) {
+      res.status(500).json({ error: e.message });
+  }
 });
 
 router.put('/orders/:id', async (req, res) => {
@@ -160,6 +168,12 @@ router.get('/banners', async (req, res) => {
   res.json(banners);
 });
 
+// --- Promo Banners Routes ---
+router.get('/promo-banners', async (req, res) => {
+  const promos = await PromoBanner.find();
+  res.json(promos);
+});
+
 // --- Settings Routes ---
 router.get('/settings', async (req, res) => {
   const settings = await Settings.findOne();
@@ -180,12 +194,13 @@ router.post('/settings', async (req, res) => {
 
 // --- Seeding ---
 router.post('/seed', async (req, res) => {
-    const { products, categories, slides, banners, users } = req.body;
+    const { products, categories, slides, banners, users, promoBanners } = req.body;
     
     if(products) await Product.insertMany(products);
     if(categories) await Category.insertMany(categories);
     if(slides) await Slide.insertMany(slides);
     if(banners) await Banner.insertMany(banners);
+    if(promoBanners) await PromoBanner.insertMany(promoBanners);
     if(users) await User.insertMany(users);
     
     res.json({ message: "Database seeded!" });

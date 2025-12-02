@@ -1,7 +1,7 @@
 
 import React, { useState, useContext, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ShoppingBag, Menu, X, User as UserIcon, LogOut, Search, LayoutDashboard, Globe, Moon, Sun, Download, LogIn, UserPlus, ArrowRight, ShieldCheck } from 'lucide-react';
+import { ShoppingBag, Menu, X, User as UserIcon, LogOut, Search, LayoutDashboard, Globe, Moon, Sun, Download, LogIn, UserPlus, ArrowRight, ShieldCheck, Palette, Monitor, MessageCircle } from 'lucide-react';
 import { StoreContext } from '../context/StoreContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
@@ -10,11 +10,12 @@ import { Language } from '../context/translations';
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { state, dispatch } = useContext(StoreContext);
   const { t, language, setLanguage } = useLanguage();
-  const { theme, toggleTheme } = useTheme();
+  const { theme, setTheme, effectiveTheme } = useTheme();
   
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
+  const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [showInstallBtn, setShowInstallBtn] = useState(false);
@@ -36,17 +37,28 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     { code: 'it', label: 'Italiano', flag: '🇮🇹' },
   ];
 
+  const themes = [
+    { id: 'light', label: 'Light', icon: Sun },
+    { id: 'dark', label: 'Dark', icon: Moon },
+    { id: 'classic', label: 'Classic', icon: Palette },
+    { id: 'auto', label: 'Auto', icon: Monitor },
+  ];
+
   const currentLang = languages.find(l => l.code === language);
   const { settings } = state;
 
-  // Determine effective brand text color for dark mode
+  // Determine effective brand text color based on effective theme
   const isDefaultBrandColor = !settings.brandTextColor || settings.brandTextColor === '#111827';
-  const effectiveBrandColor = (theme === 'dark' && isDefaultBrandColor) ? '#ffffff' : (settings.brandTextColor || '#111827');
+  const effectiveBrandColor = (effectiveTheme === 'dark' && isDefaultBrandColor) ? '#ffffff' : (settings.brandTextColor || '#111827');
 
-  // Header Color Styles
+  // Header Color Styles - Uses effectiveTheme to respond to Auto mode
   const headerStyle = {
-    backgroundColor: settings.headerBackgroundColor || (theme === 'dark' ? '#1f2937' : '#ffffff'),
-    color: settings.headerTextColor || (theme === 'dark' ? '#e5e7eb' : '#4b5563')
+    backgroundColor: effectiveTheme === 'classic' 
+      ? '#fffbef' 
+      : (settings.headerBackgroundColor || (effectiveTheme === 'dark' ? '#1f2937' : '#ffffff')),
+    color: effectiveTheme === 'classic' 
+      ? '#44403c'
+      : (settings.headerTextColor || (effectiveTheme === 'dark' ? '#e5e7eb' : '#4b5563'))
   };
 
   useEffect(() => {
@@ -119,7 +131,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col transition-colors duration-300 dark:bg-gray-900">
+    <div className="min-h-screen flex flex-col transition-colors duration-300 dark:bg-gray-900 relative">
       {/* Dynamic Theme Styles */}
       <style>
         {`
@@ -134,29 +146,21 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           .bg-indigo-50 { background-color: ${settings.primaryColor}10 !important; }
           .text-indigo-700 { color: ${settings.primaryColor} !important; filter: brightness(0.7); }
           
-          /* Dark Mode Overrides for generated styles & general text visibility */
+          /* Dark Mode Overrides */
           .dark .bg-indigo-50 { background-color: ${settings.primaryColor}30 !important; }
           .dark .text-indigo-700 { color: ${settings.primaryColor} !important; filter: brightness(1.5); }
-          
-          /* Backgrounds */
           .dark .bg-white { background-color: #1f2937 !important; color: #f3f4f6; }
           .dark .bg-gray-50 { background-color: #111827 !important; }
           .dark .bg-gray-100 { background-color: #374151 !important; }
           .dark .bg-gray-200 { background-color: #4b5563 !important; }
-          
-          /* Text Colors Inversion */
           .dark .text-gray-900 { color: #f9fafb !important; }
           .dark .text-gray-800 { color: #f3f4f6 !important; }
           .dark .text-gray-700 { color: #e5e7eb !important; }
           .dark .text-gray-600 { color: #d1d5db !important; }
           .dark .text-gray-500 { color: #9ca3af !important; }
-          
-          /* Borders */
           .dark .border-gray-100 { border-color: #374151 !important; }
           .dark .border-gray-200 { border-color: #4b5563 !important; }
           .dark .border-gray-300 { border-color: #6b7280 !important; }
-
-          /* Form Elements */
           .dark input, .dark select, .dark textarea { 
              background-color: #374151 !important; 
              border-color: #4b5563 !important; 
@@ -164,6 +168,42 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           }
           .dark input::placeholder, .dark textarea::placeholder {
              color: #9ca3af !important;
+          }
+
+          /* Classic Theme Overrides */
+          .classic body {
+            background-color: #fdfbf7 !important;
+            color: #44403c !important;
+            font-family: 'Georgia', serif;
+          }
+          .classic .bg-white {
+            background-color: #ffffff !important;
+            border-color: #e7e5e4 !important;
+          }
+          .classic .bg-gray-50 {
+            background-color: #f5f5f4 !important;
+          }
+          .classic .bg-gray-100 {
+            background-color: #efece6 !important;
+          }
+          .classic .text-gray-900 {
+            color: #292524 !important;
+          }
+          .classic .text-gray-700 {
+            color: #44403c !important;
+          }
+          .classic .text-gray-600 {
+            color: #57534e !important;
+          }
+          .classic .text-gray-500 {
+            color: #78716c !important;
+          }
+          .classic nav {
+            background-color: #fffbef !important;
+            border-bottom-color: #e7e5e4 !important;
+          }
+          .classic .font-bold {
+            font-weight: 700;
           }
           
           /* Secondary Color Mappings */
@@ -245,15 +285,36 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 </button>
               )}
 
-              {/* Theme Toggle */}
-              <button 
-                onClick={toggleTheme}
-                className="p-2 transition rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-indigo-600"
-                style={{ color: headerStyle.color }}
-                title={theme === 'light' ? "Switch to Dark Mode" : "Switch to Light Mode"}
-              >
-                {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
-              </button>
+              {/* Theme Selector */}
+              <div className="relative">
+                <button 
+                  onClick={() => setIsThemeMenuOpen(!isThemeMenuOpen)}
+                  className="p-2 transition rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-indigo-600"
+                  style={{ color: headerStyle.color }}
+                  title="Select Theme"
+                >
+                  {theme === 'light' && <Sun size={20} />}
+                  {theme === 'dark' && <Moon size={20} />}
+                  {theme === 'classic' && <Palette size={20} />}
+                  {theme === 'auto' && <Monitor size={20} />}
+                </button>
+                {isThemeMenuOpen && (
+                    <div className="absolute right-0 mt-2 w-32 bg-white dark:bg-gray-800 rounded-lg shadow-xl py-2 border border-gray-100 dark:border-gray-700 z-50 animate-fade-in-up">
+                        {themes.map(t => (
+                            <button
+                                key={t.id}
+                                onClick={() => {
+                                    setTheme(t.id as any);
+                                    setIsThemeMenuOpen(false);
+                                }}
+                                className={`w-full text-left px-4 py-2 text-sm flex items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-700 ${theme === t.id ? 'text-indigo-600 font-bold' : 'text-gray-700 dark:text-gray-200'}`}
+                            >
+                                <t.icon size={16} /> {t.label}
+                            </button>
+                        ))}
+                    </div>
+                )}
+              </div>
 
               {/* Language Selector */}
               <div className="relative">
@@ -389,18 +450,35 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 </button>
              )}
 
-             <div className="pt-2 border-t border-gray-100 dark:border-gray-700">
-                 <p className="text-xs text-gray-500 mb-2 uppercase">Language</p>
-                 <div className="flex gap-4">
-                     {languages.map(lang => (
-                         <button 
-                            key={lang.code} 
-                            onClick={() => setLanguage(lang.code)}
-                            className={`text-2xl ${language === lang.code ? 'opacity-100 ring-2 ring-indigo-500 rounded-full' : 'opacity-50'}`}
-                         >
-                             {lang.flag}
-                         </button>
-                     ))}
+             <div className="pt-4 mt-2 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                 <div>
+                    <p className="text-xs text-gray-500 mb-2 uppercase">Theme</p>
+                    <div className="flex gap-4">
+                        {themes.map(t => (
+                            <button
+                                key={t.id}
+                                onClick={() => setTheme(t.id as any)}
+                                className={`p-2 rounded-full border ${theme === t.id ? 'border-indigo-600 text-indigo-600 bg-indigo-50' : 'border-gray-200 text-gray-500'}`}
+                            >
+                                <t.icon size={16} />
+                            </button>
+                        ))}
+                    </div>
+                 </div>
+                 
+                 <div>
+                    <p className="text-xs text-gray-500 mb-2 uppercase">Language</p>
+                    <div className="flex gap-2">
+                        {languages.map(lang => (
+                            <button 
+                                key={lang.code} 
+                                onClick={() => setLanguage(lang.code)}
+                                className={`text-xl ${language === lang.code ? 'opacity-100 ring-2 ring-indigo-500 rounded-full' : 'opacity-50'}`}
+                            >
+                                {lang.flag}
+                            </button>
+                        ))}
+                    </div>
                  </div>
              </div>
           </div>
@@ -529,13 +607,29 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           </div>
         )}
 
+        {/* WhatsApp Chat Button */}
+        {settings.whatsappNumber && (
+            <a 
+                href={`https://wa.me/${settings.whatsappNumber}`} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="fixed bottom-6 right-6 z-40 bg-[#25D366] text-white p-4 rounded-full shadow-lg hover:scale-110 transition-transform duration-300 flex items-center gap-2 group"
+                aria-label="Chat on WhatsApp"
+            >
+                <MessageCircle size={28} fill="white" className="text-[#25D366]" />
+                <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 ease-in-out whitespace-nowrap font-bold">
+                    Chat with us
+                </span>
+            </a>
+        )}
+
         {/* Main Content */}
         <main className="flex-grow bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
           {children}
         </main>
 
         {/* Footer */}
-        <footer className="pt-12 pb-8 transition-colors duration-300" style={{ backgroundColor: settings.footerBackgroundColor || '#111827', color: settings.footerTextColor || '#ffffff' }}>
+        <footer className="pt-12 pb-8 transition-colors duration-300" style={{ backgroundColor: effectiveTheme === 'classic' ? '#292524' : (settings.footerBackgroundColor || '#111827'), color: settings.footerTextColor || '#ffffff' }}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
               <div className="col-span-1 md:col-span-2">

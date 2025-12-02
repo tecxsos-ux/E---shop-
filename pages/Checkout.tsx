@@ -1,9 +1,9 @@
 
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { StoreContext } from '../context/StoreContext';
 import { useNavigate } from 'react-router-dom';
 import { OrderStatus } from '../types';
-import { CreditCard, CheckCircle, Loader } from 'lucide-react';
+import { CreditCard, CheckCircle, Loader, Mail } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 const Checkout: React.FC = () => {
@@ -21,6 +21,7 @@ const Checkout: React.FC = () => {
   const total = subtotal + taxAmount + shippingCost;
 
   const [form, setForm] = useState({
+    email: '',
     line1: '',
     city: '',
     postalCode: '',
@@ -30,6 +31,13 @@ const Checkout: React.FC = () => {
     expiry: '',
     cvc: ''
   });
+
+  // Pre-fill email if user is logged in
+  useEffect(() => {
+    if (state.user) {
+        setForm(prev => ({ ...prev, email: state.user?.email || '' }));
+    }
+  }, [state.user]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setForm({...form, [e.target.name]: e.target.value});
@@ -47,6 +55,7 @@ const Checkout: React.FC = () => {
        const newOrder = {
          id: `ORD-${Math.floor(Math.random() * 10000)}`,
          userId: state.user?.id || 'guest',
+         customerEmail: form.email, // Capture email for invoice
          items: [...state.cart],
          subtotal: subtotal,
          tax: taxAmount,
@@ -67,7 +76,7 @@ const Checkout: React.FC = () => {
 
        setTimeout(() => {
           navigate('/profile');
-       }, 2000);
+       }, 3000);
     }, 2000);
   };
 
@@ -87,7 +96,10 @@ const Checkout: React.FC = () => {
             <CheckCircle className="w-16 h-16 text-green-500" />
         </div>
         <h2 className="text-3xl font-bold text-gray-900">{t('checkout.success')}</h2>
-        <p className="text-gray-500 mt-2">{t('checkout.redirecting')}</p>
+        <p className="text-gray-500 mt-2 text-center">
+            {t('checkout.redirecting')}<br/>
+            <span className="text-sm text-indigo-600">Invoice sent to {form.email}</span>
+        </p>
       </div>
     );
   }
@@ -99,6 +111,27 @@ const Checkout: React.FC = () => {
         
         {/* Checkout Form */}
         <form onSubmit={handlePayment} className="space-y-6">
+           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+              <h2 className="text-xl font-semibold mb-4">{t('contact.infoTitle')}</h2>
+              <div className="space-y-4">
+                 <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Email for Invoice</label>
+                    <div className="relative">
+                        <input 
+                            required 
+                            type="email"
+                            name="email" 
+                            value={form.email}
+                            placeholder="you@example.com"
+                            onChange={handleInputChange} 
+                            className="w-full pl-10 p-3 border border-gray-300 rounded-md text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent placeholder-gray-400" 
+                        />
+                        <Mail className="absolute left-3 top-3.5 text-gray-400 w-5 h-5" />
+                    </div>
+                 </div>
+              </div>
+           </div>
+
            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
               <h2 className="text-xl font-semibold mb-4">{t('checkout.shippingInfo')}</h2>
               <div className="space-y-4">
@@ -130,12 +163,12 @@ const Checkout: React.FC = () => {
                    onChange={handleInputChange} 
                    className="w-full p-3 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                  >
-                    <option value="US">United States</option>
-                    <option value="CA">Canada</option>
-                    <option value="UK">United Kingdom</option>
-                    <option value="FR">France</option>
-                    <option value="DE">Germany</option>
-                    <option value="IT">Italy</option>
+                    <option value="United States">United States</option>
+                    <option value="Canada">Canada</option>
+                    <option value="United Kingdom">United Kingdom</option>
+                    <option value="France">France</option>
+                    <option value="Germany">Germany</option>
+                    <option value="Italy">Italy</option>
                  </select>
               </div>
            </div>

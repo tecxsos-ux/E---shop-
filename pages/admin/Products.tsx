@@ -2,7 +2,7 @@
 import React, { useContext, useState } from 'react';
 import { StoreContext } from '../../context/StoreContext';
 import AdminLayout from '../../components/AdminLayout';
-import { Plus, Wand2, Image as ImageIcon, Loader2, Trash2, X } from 'lucide-react';
+import { Plus, Wand2, Image as ImageIcon, Loader2, Trash2, X, Upload, AlertTriangle } from 'lucide-react';
 import { Product, Variant } from '../../types';
 import { generateProductDescription, editProductImage } from '../../services/geminiService';
 
@@ -66,6 +66,18 @@ const AdminProducts: React.FC = () => {
       return options.join(', ');
   };
   // --------------------------------
+
+  // Image Upload Handler
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setForm(prev => ({ ...prev, image: reader.result as string }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleAiDescription = async () => {
     if (!form.name) return alert("Please enter a product name first.");
@@ -132,6 +144,8 @@ const AdminProducts: React.FC = () => {
     setIsModalOpen(false);
     setForm(initialFormState);
   };
+
+  const isPcloudSharingLink = form.image?.includes('pcloud.link/publink');
 
   return (
     <AdminLayout>
@@ -221,13 +235,29 @@ const AdminProducts: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">Image URL</label>
+                <label className="block text-sm font-medium text-gray-700">Image Source</label>
                 <div className="flex gap-2 mt-1">
-                  <input required name="image" value={form.image} onChange={handleInputChange} placeholder="https://..." className="flex-1 border border-gray-300 rounded-md p-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+                  <input required name="image" value={form.image} onChange={handleInputChange} placeholder="Paste URL (pCloud, AWS) or upload ->" className="flex-1 border border-gray-300 rounded-md p-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+                  
+                  {/* Local Upload Button */}
+                  <label className="px-3 py-2 bg-gray-100 text-gray-700 rounded-md cursor-pointer hover:bg-gray-200 flex items-center gap-2 border border-gray-300">
+                      <Upload size={18} />
+                      <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                  </label>
+
                   <button type="button" onClick={handleRemoveBackground} disabled={bgRemovalLoading} className="px-3 py-2 bg-purple-100 text-purple-700 rounded-md text-sm font-medium hover:bg-purple-200 flex items-center gap-1">
-                      {bgRemovalLoading ? <Loader2 className="animate-spin w-4 h-4" /> : <Wand2 className="w-4 h-4" />} Remove BG
+                      {bgRemovalLoading ? <Loader2 className="animate-spin w-4 h-4" /> : <Wand2 className="w-4 h-4" />} BG
                   </button>
                 </div>
+                {isPcloudSharingLink && (
+                  <div className="flex items-center gap-2 mt-2 text-amber-600 bg-amber-50 p-2 rounded-md border border-amber-200 text-xs font-bold">
+                     <AlertTriangle size={16} />
+                     <span>This looks like a pCloud sharing link (webpage). Please use a DIRECT image link (ending in .jpg/.png) or upload the file directly here.</span>
+                  </div>
+                )}
+                {!isPcloudSharingLink && (
+                    <p className="text-xs text-gray-500 mt-1">Tip: If using pCloud, ensure you use a <strong>direct link</strong> (ending in .jpg/.png).</p>
+                )}
                 {form.image && (
                     <div className="mt-2 h-32 w-32 border rounded-md overflow-hidden bg-gray-50">
                         <img src={form.image} alt="Preview" className="w-full h-full object-contain" />

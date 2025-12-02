@@ -2,7 +2,7 @@
 import React, { useContext, useState } from 'react';
 import { StoreContext } from '../../context/StoreContext';
 import AdminLayout from '../../components/AdminLayout';
-import { Save, Image as ImageIcon, Type, Palette, DollarSign, Building, Upload } from 'lucide-react';
+import { Save, Image as ImageIcon, Type, Palette, DollarSign, Building, Upload, MessageCircle } from 'lucide-react';
 
 const AdminSettings: React.FC = () => {
   const { state, dispatch } = useContext(StoreContext);
@@ -381,6 +381,21 @@ const AdminSettings: React.FC = () => {
                           className="w-full border border-gray-300 rounded-lg p-2.5 text-gray-900 bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                         />
                      </div>
+                 </div>
+
+                 <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
+                        <MessageCircle size={16} className="text-green-600" /> WhatsApp Number
+                    </label>
+                    <input 
+                      type="text" 
+                      name="whatsappNumber" 
+                      value={form.whatsappNumber || ''} 
+                      onChange={handleChange}
+                      placeholder="e.g. 15551234567 (No + symbol)"
+                      className="w-full border border-gray-300 rounded-lg p-2.5 text-gray-900 bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Enter international format without '+' or dashes. Used for the Chatbot button.</p>
                  </div>
              </div>
           </div>

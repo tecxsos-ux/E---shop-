@@ -2,7 +2,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { StoreContext } from '../context/StoreContext';
 import { useLanguage } from '../context/LanguageContext';
-import { ArrowRight, ShoppingBag, ShieldCheck, Truck, Star, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight, ShoppingBag, ShieldCheck, Truck, Star, ChevronLeft, ChevronRight, Tag } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Home: React.FC = () => {
@@ -11,9 +11,14 @@ const Home: React.FC = () => {
   const newArrivals = state.products.filter(p => p.isNew).slice(0, 4);
   const todayOffers = state.products.filter(p => p.discount).slice(0, 4);
   
+  // Featured products (distinct from new arrivals for demo variety)
+  // We grab items starting from index 2 to mix it up
+  const featuredProducts = state.products.slice(1, 5);
+
   // Use slides from global state
   const slides = state.slides;
   const banners = state.banners;
+  const promoBanners = state.promoBanners;
 
   // Carousel State
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -147,6 +152,63 @@ const Home: React.FC = () => {
              <div><h3 className="font-bold text-gray-900 dark:text-white">{t('home.returns')}</h3><p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{t('home.returnsDesc')}</p></div>
            </div>
         </div>
+      </section>
+
+      {/* Small Promo Banners & Featured Grid */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mt-10">
+         {/* Small Banners Row */}
+         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            {promoBanners.map(promo => (
+                <Link key={promo.id} to={promo.link} className="relative h-40 rounded-xl overflow-hidden group shadow-md hover:shadow-xl transition-all">
+                    <img src={promo.image} alt={promo.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors flex flex-col justify-center p-6">
+                        <span className={`${promo.textColorClass || 'text-yellow-400'} font-bold text-xs uppercase tracking-wider mb-1`}>
+                            {t(promo.title) !== promo.title ? t(promo.title) : promo.title}
+                        </span>
+                        <h3 className="text-2xl font-bold text-white">
+                            {t(promo.description) !== promo.description ? t(promo.description) : promo.description}
+                        </h3>
+                    </div>
+                </Link>
+            ))}
+         </div>
+
+         {/* Featured Products Grid */}
+         <div className="flex items-center gap-3 mb-6">
+            <Tag size={20} className="text-indigo-600 dark:text-indigo-400" />
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t('home.featuredProducts')}</h2>
+         </div>
+         
+         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {featuredProducts.map((product) => (
+             <Link key={product.id} to={`/product/${product.id}`} className="group relative bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-lg hover:shadow-indigo-500/10 transition-all duration-300 border border-gray-100 dark:border-gray-700 flex flex-col overflow-hidden">
+                <div className="relative h-60 overflow-hidden bg-gray-100 dark:bg-gray-700">
+                  <img src={product.image} alt={product.name} className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700" />
+                  
+                  {/* Overlay Gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                  <button className="absolute bottom-3 right-3 bg-white dark:bg-gray-900 text-indigo-600 dark:text-indigo-400 p-2.5 rounded-full shadow-lg opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 z-10 hover:bg-indigo-600 hover:text-white">
+                     <ShoppingBag size={18} />
+                  </button>
+                </div>
+
+                <div className="p-4 flex-grow flex flex-col">
+                  <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mb-1">{product.brand}</p>
+                  <h3 className="text-base font-bold text-gray-900 dark:text-white mb-2 line-clamp-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                      {product.name}
+                  </h3>
+                  <div className="mt-auto flex items-center justify-between">
+                    <p className="text-lg font-bold text-gray-900 dark:text-white">${product.price}</p>
+                    <div className="flex items-center gap-1">
+                        <Star size={12} className="text-yellow-400 fill-current" />
+                        <span className="text-xs text-gray-400 font-bold">4.8</span>
+                    </div>
+                  </div>
+                </div>
+             </Link>
+            ))}
+         </div>
       </section>
 
       {/* Categories */}

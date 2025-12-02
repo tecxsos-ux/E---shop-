@@ -20,7 +20,17 @@ const BannerSchema = new mongoose.Schema({
   buttonText: String
 });
 
+const PromoBannerSchema = new mongoose.Schema({
+  id: String,
+  title: String,
+  description: String,
+  image: String,
+  link: String,
+  textColorClass: String
+});
+
 module.exports = {
   Slide: mongoose.model('Slide', SlideSchema),
-  Banner: mongoose.model('Banner', BannerSchema)
+  Banner: mongoose.model('Banner', BannerSchema),
+  PromoBanner: mongoose.model('PromoBanner', PromoBannerSchema)
 };

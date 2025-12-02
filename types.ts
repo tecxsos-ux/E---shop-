@@ -105,6 +105,15 @@ export interface Banner {
   buttonText: string;
 }
 
+export interface PromoBanner {
+  id: string;
+  title: string;
+  description: string;
+  image: string;
+  link: string;
+  textColorClass?: string; // e.g., "text-yellow-400"
+}
+
 export interface Settings {
   brandName: string;
   brandLogo: string;
@@ -130,4 +139,7 @@ export interface Settings {
   companyPhone: string;
   companyEmail: string;
   companyWorkingHours: string;
+  
+  // Social/Contact
+  whatsappNumber?: string;
 }

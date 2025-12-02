@@ -1,37 +1,75 @@
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-type Theme = 'light' | 'dark';
+export type Theme = 'light' | 'dark' | 'classic' | 'auto';
 
 interface ThemeContextType {
   theme: Theme;
-  toggleTheme: () => void;
+  effectiveTheme: 'light' | 'dark' | 'classic';
+  setTheme: (theme: Theme) => void;
 }
 
-const ThemeContext = createContext<ThemeContextType>({ theme: 'light', toggleTheme: () => {} });
+const ThemeContext = createContext<ThemeContextType>({ 
+    theme: 'auto', 
+    effectiveTheme: 'light',
+    setTheme: () => {} 
+});
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [theme, setTheme] = useState<Theme>(() => {
-    // Check local storage or system preference
-    const saved = localStorage.getItem('theme');
-    if (saved === 'dark' || saved === 'light') return saved;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  const [theme, setThemeState] = useState<Theme>(() => {
+    // Check local storage or default to auto
+    const saved = localStorage.getItem('theme') as Theme;
+    if (['light', 'dark', 'classic', 'auto'].includes(saved)) return saved;
+    return 'auto';
   });
+
+  // Track the actual visual theme being applied (resolves 'auto' to 'light' or 'dark')
+  const [effectiveTheme, setEffectiveTheme] = useState<'light' | 'dark' | 'classic'>('light');
 
   useEffect(() => {
     localStorage.setItem('theme', theme);
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    const root = document.documentElement;
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+    const getVisualTheme = () => {
+        if (theme === 'auto') {
+            return mediaQuery.matches ? 'dark' : 'light';
+        }
+        return theme;
+    };
+
+    const applyTheme = () => {
+        const visualTheme = getVisualTheme();
+        setEffectiveTheme(visualTheme);
+
+        // Clean up classes
+        root.classList.remove('dark', 'classic');
+        
+        // Apply new theme class
+        if (visualTheme === 'dark') {
+            root.classList.add('dark');
+        } else if (visualTheme === 'classic') {
+            root.classList.add('classic');
+        }
+    };
+
+    applyTheme();
+
+    // Listener for system theme changes when in Auto mode
+    const handleChange = () => {
+        if (theme === 'auto') applyTheme();
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
   }, [theme]);
 
-  const toggleTheme = () => {
-    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  const setTheme = (newTheme: Theme) => {
+    setThemeState(newTheme);
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, setTheme, effectiveTheme }}>
       {children}
     </ThemeContext.Provider>
   );

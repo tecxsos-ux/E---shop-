@@ -1,3 +1,4 @@
+
 const CACHE_NAME = 'luxemarket-cache-v2';
 const STATIC_ASSETS = [
   '/',
@@ -71,5 +72,44 @@ self.addEventListener('fetch', (event) => {
         throw error;
       }
     })()
+  );
+});
+
+// Push Notification Event
+self.addEventListener('push', (event) => {
+  const data = event.data ? event.data.json() : { title: 'New Notification', body: 'Check it out!' };
+  
+  const options = {
+    body: data.body || 'You have a new update from LuxeMarket.',
+    icon: 'https://cdn-icons-png.flaticon.com/512/3081/3081559.png',
+    badge: 'https://cdn-icons-png.flaticon.com/512/3081/3081559.png',
+    vibrate: [100, 50, 100],
+    data: {
+      dateOfArrival: Date.now(),
+      primaryKey: 1
+    }
+  };
+
+  event.waitUntil(
+    self.registration.showNotification(data.title || 'LuxeMarket', options)
+  );
+});
+
+// Notification Click Event
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+        if (clientList.length > 0) {
+            let client = clientList[0];
+            for (let i = 0; i < clientList.length; i++) {
+                if (clientList[i].focused) {
+                    client = clientList[i];
+                }
+            }
+            return client.focus();
+        }
+        return clients.openWindow('/');
+    })
   );
 });

@@ -2,7 +2,7 @@
 import React, { useContext, useState } from 'react';
 import { StoreContext } from '../../context/StoreContext';
 import AdminLayout from '../../components/AdminLayout';
-import { Plus, Trash2, Layers } from 'lucide-react';
+import { Plus, Trash2, Layers, Upload, AlertTriangle } from 'lucide-react';
 import { Category } from '../../types';
 
 const AdminCategories: React.FC = () => {
@@ -16,6 +16,17 @@ const AdminCategories: React.FC = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setForm({ ...form, image: reader.result as string });
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -36,6 +47,8 @@ const AdminCategories: React.FC = () => {
       dispatch({ type: 'DELETE_CATEGORY', payload: id });
     }
   };
+  
+  const isPcloudSharingLink = form.image?.includes('pcloud.link/publink');
 
   return (
     <AdminLayout>
@@ -96,8 +109,20 @@ const AdminCategories: React.FC = () => {
                 <input required name="name" value={form.name} onChange={handleInputChange} className="mt-1 w-full border border-gray-300 rounded-md p-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Image URL</label>
-                <input required name="image" value={form.image} onChange={handleInputChange} placeholder="https://..." className="mt-1 w-full border border-gray-300 rounded-md p-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+                <label className="block text-sm font-medium text-gray-700">Image Source</label>
+                <div className="flex gap-2 mt-1">
+                  <input required name="image" value={form.image} onChange={handleInputChange} placeholder="URL or Upload ->" className="flex-1 border border-gray-300 rounded-md p-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+                  <label className="px-3 py-2 bg-gray-100 text-gray-700 rounded-md cursor-pointer hover:bg-gray-200 flex items-center gap-2 border border-gray-300">
+                      <Upload size={18} />
+                      <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                  </label>
+                </div>
+                {isPcloudSharingLink && (
+                  <div className="flex items-center gap-2 mt-2 text-amber-600 bg-amber-50 p-2 rounded-md border border-amber-200 text-xs font-bold">
+                     <AlertTriangle size={16} />
+                     <span>Warning: This is a pCloud sharing link. Use a direct image link or upload directly.</span>
+                  </div>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">Subcategories</label>

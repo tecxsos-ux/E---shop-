@@ -1,8 +1,8 @@
 
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { StoreContext } from '../context/StoreContext';
-import { Star, Truck, Shield, RotateCcw, ShoppingCart, Minus, Plus, Check, MessageSquare } from 'lucide-react';
+import { Star, Truck, Shield, RotateCcw, ShoppingCart, Minus, Plus, Check, MessageSquare, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { Product, Review } from '../types';
 
@@ -17,6 +17,9 @@ const ProductDetails: React.FC = () => {
   const [mainImage, setMainImage] = useState<string>('');
   const [quantity, setQuantity] = useState<number | string>(1);
   const [isAdding, setIsAdding] = useState(false);
+  
+  // Carousel Ref
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   // Review State
   const [rating, setRating] = useState(5);
@@ -143,6 +146,14 @@ const ProductDetails: React.FC = () => {
       dispatch({ type: 'ADD_REVIEW', payload: newReview });
       setComment('');
       setRating(5);
+  };
+  
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollRef.current) {
+        const { current } = scrollRef;
+        const scrollAmount = direction === 'left' ? -300 : 300;
+        current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
   };
 
   // Calculate display price
@@ -374,47 +385,72 @@ const ProductDetails: React.FC = () => {
         <div className="border-t border-gray-200 dark:border-gray-700 pt-12 animate-fade-in-up">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-8">{t('product.relatedProducts')}</h2>
             
-            <div className="flex overflow-x-auto gap-6 pb-8 snap-x -mx-4 px-4 sm:mx-0 sm:px-0">
-                {relatedProducts.map(relProduct => (
-                    <Link 
-                        key={relProduct.id} 
-                        to={`/product/${relProduct.id}`} 
-                        className="group block bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl overflow-hidden hover:shadow-xl hover:shadow-indigo-100 dark:hover:shadow-indigo-900/20 transition-all duration-300 hover:-translate-y-1 min-w-[220px] md:min-w-[260px] snap-start"
-                    >
-                        <div className="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-700">
-                             <img src={relProduct.image} alt={relProduct.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                             
-                             {/* Badges */}
-                             {relProduct.discount && (
-                                <span className="absolute top-2 left-2 bg-red-500 text-white text-[10px] px-2 py-1 font-bold rounded shadow-sm">
-                                  -{relProduct.discount}%
-                                </span>
-                             )}
+            <div className="relative group/carousel">
+                {/* Scroll Left Button */}
+                <button 
+                    onClick={() => scroll('left')} 
+                    className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 dark:bg-gray-800/90 p-2 rounded-full shadow-lg opacity-0 group-hover/carousel:opacity-100 transition-opacity hover:scale-110 focus:opacity-100 hidden md:block border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200"
+                    aria-label="Scroll left"
+                >
+                    <ChevronLeft size={24} />
+                </button>
 
-                             {/* Quick Add Button - Appears on Hover */}
-                             <button
-                                onClick={(e) => handleQuickAdd(e, relProduct)}
-                                className="absolute bottom-3 right-3 bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 p-3 rounded-full shadow-lg opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-600 dark:hover:text-white z-10"
-                                title={t('product.addToCart')}
-                             >
-                                <ShoppingCart size={18} />
-                             </button>
-                        </div>
-                        <div className="p-4">
-                            <h3 className="font-bold text-gray-900 dark:text-white truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{relProduct.name}</h3>
-                            <div className="flex items-center gap-2 mt-1">
-                              {relProduct.discount ? (
-                                <>
-                                  <span className="text-gray-900 dark:text-white font-bold">${relProduct.price}</span>
-                                  <span className="text-xs text-gray-400 line-through">${(relProduct.price * 1.2).toFixed(2)}</span>
-                                </>
-                              ) : (
-                                <span className="text-gray-500 dark:text-gray-300 text-sm font-medium">${relProduct.price}</span>
-                              )}
+                {/* Carousel Container */}
+                <div 
+                    ref={scrollRef}
+                    className="flex overflow-x-auto gap-6 pb-8 snap-x -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-hide"
+                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                >
+                    {relatedProducts.map(relProduct => (
+                        <Link 
+                            key={relProduct.id} 
+                            to={`/product/${relProduct.id}`} 
+                            className="group block bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl overflow-hidden hover:shadow-xl hover:shadow-indigo-100 dark:hover:shadow-indigo-900/20 transition-all duration-300 hover:-translate-y-1 min-w-[220px] md:min-w-[260px] snap-start"
+                        >
+                            <div className="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-700">
+                                <img src={relProduct.image} alt={relProduct.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                                
+                                {/* Badges */}
+                                {relProduct.discount && (
+                                    <span className="absolute top-2 left-2 bg-red-500 text-white text-[10px] px-2 py-1 font-bold rounded shadow-sm">
+                                    -{relProduct.discount}%
+                                    </span>
+                                )}
+
+                                {/* Quick Add Button - Appears on Hover */}
+                                <button
+                                    onClick={(e) => handleQuickAdd(e, relProduct)}
+                                    className="absolute bottom-3 right-3 bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 p-3 rounded-full shadow-lg opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-600 dark:hover:text-white z-10"
+                                    title={t('product.addToCart')}
+                                >
+                                    <ShoppingCart size={18} />
+                                </button>
                             </div>
-                        </div>
-                    </Link>
-                ))}
+                            <div className="p-4">
+                                <h3 className="font-bold text-gray-900 dark:text-white truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{relProduct.name}</h3>
+                                <div className="flex items-center gap-2 mt-1">
+                                {relProduct.discount ? (
+                                    <>
+                                    <span className="text-gray-900 dark:text-white font-bold">${relProduct.price}</span>
+                                    <span className="text-xs text-gray-400 line-through">${(relProduct.price * 1.2).toFixed(2)}</span>
+                                    </>
+                                ) : (
+                                    <span className="text-gray-500 dark:text-gray-300 text-sm font-medium">${relProduct.price}</span>
+                                )}
+                                </div>
+                            </div>
+                        </Link>
+                    ))}
+                </div>
+
+                {/* Scroll Right Button */}
+                <button 
+                    onClick={() => scroll('right')} 
+                    className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 dark:bg-gray-800/90 p-2 rounded-full shadow-lg opacity-0 group-hover/carousel:opacity-100 transition-opacity hover:scale-110 focus:opacity-100 hidden md:block border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200"
+                    aria-label="Scroll right"
+                >
+                    <ChevronRight size={24} />
+                </button>
             </div>
         </div>
       )}

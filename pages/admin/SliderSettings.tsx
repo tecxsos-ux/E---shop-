@@ -2,8 +2,8 @@
 import React, { useContext, useState } from 'react';
 import { StoreContext } from '../../context/StoreContext';
 import AdminLayout from '../../components/AdminLayout';
-import { Plus, Edit2, Trash2, Eye, Image as ImageIcon, Save } from 'lucide-react';
-import { Slide, Banner } from '../../types';
+import { Plus, Edit2, Trash2, Eye, Image as ImageIcon, Save, Upload, AlertTriangle } from 'lucide-react';
+import { Slide, Banner, PromoBanner } from '../../types';
 
 const AdminSliderSettings: React.FC = () => {
   const { state, dispatch } = useContext(StoreContext);
@@ -12,6 +12,7 @@ const AdminSliderSettings: React.FC = () => {
 
   // Banner State
   const [bannerForm, setBannerForm] = useState<Banner[]>(state.banners);
+  const [promoBannerForm, setPromoBannerForm] = useState<PromoBanner[]>(state.promoBanners);
 
   const [form, setForm] = useState<Omit<Slide, 'id'>>({
     title: '',
@@ -33,6 +34,17 @@ const AdminSliderSettings: React.FC = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setForm({ ...form, image: reader.result as string });
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const openAddModal = () => {
@@ -96,6 +108,20 @@ const AdminSliderSettings: React.FC = () => {
      dispatch({ type: 'UPDATE_BANNER', payload: bannerForm[index] });
      alert(`Banner ${index + 1} updated!`);
   };
+
+  // Promo Banner Handlers
+  const handlePromoBannerChange = (index: number, field: keyof PromoBanner, value: string) => {
+    const updated = [...promoBannerForm];
+    updated[index] = { ...updated[index], [field]: value };
+    setPromoBannerForm(updated);
+  };
+
+  const savePromoBanner = (index: number) => {
+    dispatch({ type: 'UPDATE_PROMO_BANNER', payload: promoBannerForm[index] });
+    alert(`Promo Banner ${index + 1} updated!`);
+  };
+  
+  const isPcloudSharingLink = form.image?.includes('pcloud.link/publink');
 
   return (
     <AdminLayout>
@@ -167,13 +193,13 @@ const AdminSliderSettings: React.FC = () => {
       
       {/* Side Banners Section */}
       <section className="mb-12 border-t border-gray-200 pt-8">
-          <h2 className="text-lg font-bold text-gray-900 mb-6">Side Banners Configuration</h2>
+          <h2 className="text-lg font-bold text-gray-900 mb-6">Side Banners (Top Right)</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
              {bannerForm.map((banner, idx) => (
                 <div key={banner.id} className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                    <h3 className="font-bold text-gray-700 mb-4 flex items-center justify-between">
                       Banner {idx + 1}
-                      <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">{idx === 0 ? 'Top Right' : 'Bottom Right'}</span>
+                      <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">{idx === 0 ? 'Top' : 'Bottom'}</span>
                    </h3>
                    
                    <div className="space-y-4">
@@ -235,6 +261,82 @@ const AdminSliderSettings: React.FC = () => {
           </div>
       </section>
 
+      {/* Promotional Banners Section */}
+      <section className="mb-12 border-t border-gray-200 pt-8">
+          <h2 className="text-lg font-bold text-gray-900 mb-6">Promotional Banners (Bottom Row)</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+             {promoBannerForm.map((promo, idx) => (
+                <div key={promo.id} className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                   <h3 className="font-bold text-gray-700 mb-4 flex items-center justify-between">
+                      Promo {idx + 1}
+                   </h3>
+                   
+                   <div className="space-y-4">
+                      <div>
+                         <label className="block text-xs font-bold text-gray-500 uppercase">Title (Small)</label>
+                         <input 
+                           value={promo.title} 
+                           onChange={(e) => handlePromoBannerChange(idx, 'title', e.target.value)}
+                           className="w-full border-b border-gray-200 py-2 text-gray-900 focus:outline-none focus:border-indigo-600"
+                         />
+                      </div>
+                      <div>
+                         <label className="block text-xs font-bold text-gray-500 uppercase">Description (Large)</label>
+                         <input 
+                           value={promo.description} 
+                           onChange={(e) => handlePromoBannerChange(idx, 'description', e.target.value)}
+                           className="w-full border-b border-gray-200 py-2 text-gray-900 focus:outline-none focus:border-indigo-600"
+                         />
+                      </div>
+                      <div>
+                         <label className="block text-xs font-bold text-gray-500 uppercase">Image URL</label>
+                         <input 
+                           value={promo.image} 
+                           onChange={(e) => handlePromoBannerChange(idx, 'image', e.target.value)}
+                           className="w-full border-b border-gray-200 py-2 text-gray-900 focus:outline-none focus:border-indigo-600"
+                         />
+                      </div>
+                      <div>
+                         <label className="block text-xs font-bold text-gray-500 uppercase">Link</label>
+                         <input 
+                           value={promo.link} 
+                           onChange={(e) => handlePromoBannerChange(idx, 'link', e.target.value)}
+                           className="w-full border-b border-gray-200 py-2 text-gray-900 focus:outline-none focus:border-indigo-600"
+                         />
+                      </div>
+                       <div>
+                         <label className="block text-xs font-bold text-gray-500 uppercase">Text Color Class</label>
+                         <select 
+                            value={promo.textColorClass || 'text-yellow-400'} 
+                            onChange={(e) => handlePromoBannerChange(idx, 'textColorClass', e.target.value)}
+                            className="w-full border-b border-gray-200 py-2 text-gray-900 focus:outline-none focus:border-indigo-600 bg-transparent"
+                         >
+                             <option value="text-yellow-400">Yellow</option>
+                             <option value="text-cyan-400">Cyan</option>
+                             <option value="text-purple-400">Purple</option>
+                             <option value="text-red-400">Red</option>
+                             <option value="text-green-400">Green</option>
+                             <option value="text-white">White</option>
+                         </select>
+                      </div>
+
+                      <div className="pt-4 mt-4 border-t border-gray-100 flex items-center justify-between">
+                          <div className="w-16 h-8 bg-gray-100 rounded overflow-hidden">
+                             <img src={promo.image} className="w-full h-full object-cover" alt="Preview"/>
+                          </div>
+                          <button 
+                             onClick={() => savePromoBanner(idx)}
+                             className="bg-gray-900 text-white px-3 py-2 rounded-lg text-xs font-bold hover:bg-gray-800 transition flex items-center gap-2"
+                          >
+                             <Save size={14} /> Save
+                          </button>
+                      </div>
+                   </div>
+                </div>
+             ))}
+          </div>
+      </section>
+
       {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-50 p-4">
@@ -259,8 +361,20 @@ const AdminSliderSettings: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">Image URL</label>
-                <input required name="image" value={form.image} onChange={handleInputChange} className="mt-1 w-full border border-gray-300 rounded-md p-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="https://..." />
+                <label className="block text-sm font-medium text-gray-700">Image Source</label>
+                <div className="flex gap-2 mt-1">
+                  <input required name="image" value={form.image} onChange={handleInputChange} className="flex-1 border border-gray-300 rounded-md p-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Paste pCloud URL or upload ->" />
+                   <label className="px-3 py-2 bg-gray-100 text-gray-700 rounded-md cursor-pointer hover:bg-gray-200 flex items-center gap-2 border border-gray-300">
+                      <Upload size={18} />
+                      <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                  </label>
+                </div>
+                {isPcloudSharingLink && (
+                  <div className="flex items-center gap-2 mt-2 text-amber-600 bg-amber-50 p-2 rounded-md border border-amber-200 text-xs font-bold">
+                     <AlertTriangle size={16} />
+                     <span>Warning: This is a pCloud sharing link. Use a direct image link or upload directly.</span>
+                  </div>
+                )}
                 {form.image && (
                    <div className="mt-2 h-32 w-full border rounded-md overflow-hidden bg-gray-50 relative">
                       <img src={form.image} alt="Preview" className="w-full h-full object-cover" />

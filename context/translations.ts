@@ -66,7 +66,14 @@ export const translations = {
       todaysDeals: "Today's Deals",
       offersEnd: "Offers end in:",
       grabDeal: "Grab Deal",
-      new: "New"
+      new: "New",
+      featuredProducts: "Featured Products",
+      promo1Title: "Summer Essentials",
+      promo1Desc: "Up to 30% off",
+      promo2Title: "Tech Upgrades",
+      promo2Desc: "New gadgets added",
+      promo3Title: "Luxury Watches",
+      promo3Desc: "Timeless elegance"
     },
     shop: {
       curated: "Curated for you",
@@ -233,7 +240,14 @@ export const translations = {
       todaysDeals: "Offres du Jour",
       offersEnd: "Fin dans :",
       grabDeal: "Saisir l'offre",
-      new: "Nouveau"
+      new: "Nouveau",
+      featuredProducts: "Produits Vedettes",
+      promo1Title: "Essentiels d'Été",
+      promo1Desc: "Jusqu'à 30% de réduction",
+      promo2Title: "Nouveautés Tech",
+      promo2Desc: "Nouveaux gadgets ajoutés",
+      promo3Title: "Montres de Luxe",
+      promo3Desc: "Élégance intemporelle"
     },
     shop: {
       curated: "Sélectionné pour vous",
@@ -400,7 +414,14 @@ export const translations = {
       todaysDeals: "Angebote des Tages",
       offersEnd: "Angebot endet in:",
       grabDeal: "Deal sichern",
-      new: "Neu"
+      new: "Neu",
+      featuredProducts: "Vorgestellte Produkte",
+      promo1Title: "Sommer Essentials",
+      promo1Desc: "Bis zu 30% Rabatt",
+      promo2Title: "Tech Upgrades",
+      promo2Desc: "Neue Gadgets",
+      promo3Title: "Luxusuhren",
+      promo3Desc: "Zeitlose Eleganz"
     },
     shop: {
       curated: "Für Sie kuratiert",
@@ -567,7 +588,14 @@ export const translations = {
       todaysDeals: "Offerte del giorno",
       offersEnd: "L'offerta termina tra:",
       grabDeal: "Prendi l'offerta",
-      new: "Nuovo"
+      new: "Nuovo",
+      featuredProducts: "Prodotti in Evidenza",
+      promo1Title: "Essenziali Estivi",
+      promo1Desc: "Fino al 30% di sconto",
+      promo2Title: "Upgrade Tech",
+      promo2Desc: "Nuovi gadget aggiunti",
+      promo3Title: "Orologi di Lusso",
+      promo3Desc: "Eleganza senza tempo"
     },
     shop: {
       curated: "Selezionato per te",
