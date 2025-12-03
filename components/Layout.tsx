@@ -504,8 +504,8 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                     ) : (
                       <div className="flow-root">
                         <ul className="-my-6 divide-y divide-gray-200 dark:divide-gray-700">
-                          {state.cart.map((item) => (
-                            <li key={`${item.id}-${item.selectedSize}-${item.selectedColor}`} className="py-6 flex">
+                          {state.cart.map((item, index) => (
+                            <li key={`${item.id}-${index}`} className="py-6 flex">
                               <div className="flex-shrink-0 w-24 h-24 border border-gray-200 dark:border-gray-700 rounded-md overflow-hidden">
                                 <img src={item.image} alt={item.name} className="w-full h-full object-center object-cover" />
                               </div>
@@ -516,12 +516,23 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                                     <p className="ml-4">${item.price}</p>
                                   </div>
                                   <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{item.brand}</p>
-                                  <div className="mt-1 text-sm text-gray-500 dark:text-gray-400 flex gap-2">
-                                    {item.selectedColor && <span>{t('product.color')}: {item.selectedColor}</span>}
-                                    {item.selectedSize && <span>{t('product.size')}: {item.selectedSize}</span>}
+                                  <div className="mt-1 text-sm text-gray-500 dark:text-gray-400 flex flex-wrap gap-2">
+                                    {/* Display Dynamic Variants */}
+                                    {item.selectedVariants ? (
+                                        Object.entries(item.selectedVariants).map(([key, val]) => (
+                                            <span key={key} className="bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded text-xs">
+                                                {key}: {val}
+                                            </span>
+                                        ))
+                                    ) : (
+                                        <>
+                                            {item.selectedColor && <span>{t('product.color')}: {item.selectedColor}</span>}
+                                            {item.selectedSize && <span>{t('product.size')}: {item.selectedSize}</span>}
+                                        </>
+                                    )}
                                   </div>
                                 </div>
-                                <div className="flex-1 flex items-end justify-between text-sm">
+                                <div className="flex-1 flex items-end justify-between text-sm mt-3">
                                   <div className="flex items-center gap-2">
                                     <button onClick={() => dispatch({type: 'DECREASE_QTY', payload: item})} className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 font-bold px-2">-</button>
                                     <p className="text-gray-500 dark:text-gray-400">Qty {item.quantity}</p>

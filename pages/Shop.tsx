@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { Filter, ShoppingBag, Star, Heart, X, ShoppingCart, Eye, ArrowUpDown, Check } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { Product } from '../types';
+import SEO from '../components/SEO';
 
 const Shop: React.FC = () => {
   const { state, dispatch } = useContext(StoreContext);
@@ -14,7 +15,7 @@ const Shop: React.FC = () => {
   
   // Quick View State
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
-  const [qvOptions, setQvOptions] = useState<{color: string; size: string}>({ color: '', size: '' });
+  const [qvSelections, setQvSelections] = useState<Record<string, string>>({});
 
   // Adding Animation State (Track which IDs are adding)
   const [addingIds, setAddingIds] = useState<string[]>([]);
@@ -59,7 +60,6 @@ const Shop: React.FC = () => {
         return b.brand.localeCompare(a.brand);
       case 'popularity':
       default:
-        // Prioritize "New" items and then discounts for simulated popularity
         const scoreA = (a.isNew ? 10 : 0) + (a.discount ? 5 : 0);
         const scoreB = (b.isNew ? 10 : 0) + (b.discount ? 5 : 0);
         return scoreB - scoreA;
@@ -71,8 +71,10 @@ const Shop: React.FC = () => {
     e.stopPropagation();
     
     // Auto-select first available options for quick add to prevent errors
-    const defaultColor = product.variants?.find(v => v.type === 'color')?.options[0];
-    const defaultSize = product.variants?.find(v => v.type === 'size')?.options[0];
+    const autoVariants: Record<string, string> = {};
+    product.variants?.forEach(v => {
+        if(v.options.length > 0) autoVariants[v.type] = v.options[0];
+    });
 
     // Trigger Animation
     setAddingIds(prev => [...prev, product.id]);
@@ -82,12 +84,12 @@ const Shop: React.FC = () => {
       payload: {
         ...product,
         quantity: 1,
-        selectedColor: defaultColor,
-        selectedSize: defaultSize,
+        selectedVariants: autoVariants,
+        selectedColor: autoVariants['Color'] || autoVariants['color'],
+        selectedSize: autoVariants['Size'] || autoVariants['size'],
       }
     });
 
-    // Remove ID after timeout
     setTimeout(() => {
         setAddingIds(prev => prev.filter(id => id !== product.id));
     }, 1000);
@@ -97,27 +99,26 @@ const Shop: React.FC = () => {
     e.preventDefault();
     e.stopPropagation();
     
-    // Initialize options
-    const defaultColor = product.variants?.find(v => v.type === 'color')?.options[0] || '';
-    const defaultSize = product.variants?.find(v => v.type === 'size')?.options[0] || '';
+    // Initialize default selections (first option of each variant)
+    const initialSelections: Record<string, string> = {};
+    product.variants?.forEach(v => {
+        if(v.options.length > 0) initialSelections[v.type] = v.options[0];
+    });
     
-    setQvOptions({ color: defaultColor, size: defaultSize });
+    setQvSelections(initialSelections);
     setQuickViewProduct(product);
   };
 
   const handleModalAddToCart = () => {
       if (!quickViewProduct) return;
       
-      const sizeVariant = quickViewProduct.variants.find(v => v.type === 'size');
-      const colorVariant = quickViewProduct.variants.find(v => v.type === 'color');
-
-      if (sizeVariant && !qvOptions.size) {
-        alert(t('product.selectSize'));
-        return;
-      }
-      if (colorVariant && !qvOptions.color) {
-        alert(t('product.selectColor'));
-        return;
+      // Validate
+      if (quickViewProduct.variants && quickViewProduct.variants.length > 0) {
+          const missing = quickViewProduct.variants.filter(v => !qvSelections[v.type]);
+          if (missing.length > 0) {
+              alert(`Please select ${missing[0].type}`);
+              return;
+          }
       }
 
       dispatch({
@@ -125,15 +126,23 @@ const Shop: React.FC = () => {
           payload: {
               ...quickViewProduct,
               quantity: 1,
-              selectedColor: qvOptions.color || undefined,
-              selectedSize: qvOptions.size || undefined
+              selectedVariants: qvSelections,
+              selectedColor: qvSelections['Color'] || qvSelections['color'],
+              selectedSize: qvSelections['Size'] || qvSelections['size']
           }
       });
       setQuickViewProduct(null);
   };
 
+  // Dynamic Title for SEO
+  const pageTitle = state.filters.category 
+    ? `${state.filters.category} Collection` 
+    : (state.filters.search ? `Search: ${state.filters.search}` : 'Shop All Products');
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <SEO title={pageTitle} description="Browse our extensive collection of premium products." />
+
       {/* Mobile Filter Dialog */}
       {mobileFiltersOpen && (
         <div className="relative z-50 lg:hidden" role="dialog" aria-modal="true" aria-labelledby="mobile-filters-title">
@@ -262,44 +271,26 @@ const Shop: React.FC = () => {
                         {quickViewProduct.description}
                     </p>
 
-                    {/* Variants */}
+                    {/* Dynamic Variants */}
                     <div className="space-y-4 mb-8">
-                        {quickViewProduct.variants.find(v => v.type === 'color') && (
-                            <div>
-                                <span className="block text-sm font-medium text-gray-700 mb-2">{t('product.color')}</span>
-                                <div className="flex gap-2" role="radiogroup" aria-label={t('product.color')}>
-                                    {quickViewProduct.variants.find(v => v.type === 'color')?.options.map(opt => (
+                        {quickViewProduct.variants?.map((variant, idx) => (
+                            <div key={idx}>
+                                <span className="block text-sm font-medium text-gray-700 mb-2 capitalize">{variant.type}</span>
+                                <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={variant.type}>
+                                    {variant.options.map(opt => (
                                         <button
                                             key={opt}
-                                            onClick={() => setQvOptions({...qvOptions, color: opt})}
-                                            aria-checked={qvOptions.color === opt}
+                                            onClick={() => setQvSelections(prev => ({ ...prev, [variant.type]: opt }))}
+                                            aria-checked={qvSelections[variant.type] === opt}
                                             role="radio"
-                                            className={`px-3 py-1.5 border rounded-md text-sm transition-all focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500 ${qvOptions.color === opt ? 'border-indigo-600 bg-indigo-50 text-indigo-700 font-medium' : 'border-gray-200 text-gray-600 hover:border-gray-300'}`}
+                                            className={`px-3 py-1.5 border rounded-md text-sm transition-all focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500 ${qvSelections[variant.type] === opt ? 'border-indigo-600 bg-indigo-50 text-indigo-700 font-medium' : 'border-gray-200 text-gray-600 hover:border-gray-300'}`}
                                         >
                                             {opt}
                                         </button>
                                     ))}
                                 </div>
                             </div>
-                        )}
-                        {quickViewProduct.variants.find(v => v.type === 'size') && (
-                            <div>
-                                <span className="block text-sm font-medium text-gray-700 mb-2">{t('product.size')}</span>
-                                <div className="flex gap-2" role="radiogroup" aria-label={t('product.size')}>
-                                    {quickViewProduct.variants.find(v => v.type === 'size')?.options.map(opt => (
-                                        <button
-                                            key={opt}
-                                            onClick={() => setQvOptions({...qvOptions, size: opt})}
-                                            aria-checked={qvOptions.size === opt}
-                                            role="radio"
-                                            className={`px-3 py-1.5 border rounded-md text-sm transition-all focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500 ${qvOptions.size === opt ? 'border-indigo-600 bg-indigo-50 text-indigo-700 font-medium' : 'border-gray-200 text-gray-600 hover:border-gray-300'}`}
-                                        >
-                                            {opt}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
+                        ))}
                     </div>
 
                     <div className="mt-auto flex flex-col gap-3">
@@ -321,6 +312,7 @@ const Shop: React.FC = () => {
         </div>
       )}
 
+      {/* Main Filter & Sort Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-gray-200 pb-6 pt-24 md:pt-6 mb-8 gap-4">
         <div>
            <span className="text-indigo-600 font-semibold tracking-wider uppercase text-xs">{t('shop.curated')}</span>
@@ -462,10 +454,8 @@ const Shop: React.FC = () => {
                             />
                         </Link>
                         
-                        {/* Overlay Gradient */}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         
-                        {/* Badges */}
                         <div className="absolute top-3 left-3 flex flex-col gap-2 z-10 pointer-events-none">
                             {product.isNew && (
                                 <span className="bg-white/90 dark:bg-gray-900/90 backdrop-blur text-gray-900 dark:text-white text-[10px] px-2.5 py-1 uppercase font-bold tracking-widest rounded-lg shadow-sm">
@@ -479,7 +469,6 @@ const Shop: React.FC = () => {
                             )}
                         </div>
 
-                        {/* Wishlist Button */}
                         <button 
                             className={`absolute top-3 right-3 w-10 h-10 flex items-center justify-center backdrop-blur rounded-full transition-all shadow-sm z-20 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 focus:opacity-100 focus:translate-y-0 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${isInWishlist ? 'bg-white text-red-500' : 'bg-white/90 dark:bg-gray-900/90 text-gray-400 hover:text-red-500 hover:bg-white dark:hover:bg-gray-800'}`}
                             onClick={(e) => {
@@ -492,7 +481,6 @@ const Shop: React.FC = () => {
                             <Heart size={20} fill={isInWishlist ? "currentColor" : "none"} />
                         </button>
 
-                        {/* Quick Actions (View + Add) */}
                         <div className="absolute bottom-3 left-3 right-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex gap-2 z-20 focus-within:translate-y-0">
                            <button 
                                onClick={(e) => handleQuickView(e, product)}
@@ -513,7 +501,6 @@ const Shop: React.FC = () => {
                         </div>
                       </div>
 
-                      {/* Content */}
                       <div className="p-5 flex-grow flex flex-col gap-2">
                         <div className="flex justify-between items-center mb-1">
                              <div className="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">

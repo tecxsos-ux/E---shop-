@@ -375,7 +375,7 @@ const storeReducer = (state: State, action: Action): State => {
          products: state.products.map(p => p.id === action.payload.id ? action.payload : p)
        };
     case 'DELETE_PRODUCT':
-      sync(`products/${action.payload}`, 'DELETE', {});
+      sync(`products/${encodeURIComponent(action.payload)}`, 'DELETE', {});
       return { ...state, products: state.products.filter(p => p.id !== action.payload) };
     case 'ADD_ORDER':
       sync('orders', 'POST', action.payload);
@@ -390,7 +390,7 @@ const storeReducer = (state: State, action: Action): State => {
       sync('reviews', 'POST', action.payload);
       return { ...state, reviews: [action.payload, ...state.reviews] };
     case 'DELETE_REVIEW':
-      sync(`reviews/${action.payload}`, 'DELETE', {});
+      sync(`reviews/${encodeURIComponent(action.payload)}`, 'DELETE', {});
       return { ...state, reviews: state.reviews.filter(r => r.id !== action.payload) };
     case 'SET_FILTER_CATEGORY':
       return { ...state, filters: { ...state.filters, category: action.payload, subCategory: null } };
@@ -404,12 +404,13 @@ const storeReducer = (state: State, action: Action): State => {
     case 'UPDATE_SLIDE':
       return { ...state, slides: state.slides.map(s => s.id === action.payload.id ? action.payload : s) };
     case 'DELETE_SLIDE':
+      sync(`slides/${encodeURIComponent(action.payload)}`, 'DELETE', {});
       return { ...state, slides: state.slides.filter(s => s.id !== action.payload) };
     case 'ADD_CATEGORY':
       sync('categories', 'POST', action.payload);
       return { ...state, categories: [...state.categories, action.payload] };
     case 'DELETE_CATEGORY':
-      sync(`categories/${action.payload}`, 'DELETE', {});
+      sync(`categories/${encodeURIComponent(action.payload)}`, 'DELETE', {});
       return { ...state, categories: state.categories.filter(c => c.id !== action.payload) };
     case 'UPDATE_BANNER':
       return { ...state, banners: state.banners.map(b => b.id === action.payload.id ? action.payload : b) };

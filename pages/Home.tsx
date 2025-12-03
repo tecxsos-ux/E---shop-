@@ -4,6 +4,7 @@ import { StoreContext } from '../context/StoreContext';
 import { useLanguage } from '../context/LanguageContext';
 import { ArrowRight, ShoppingBag, ShieldCheck, Truck, Star, ChevronLeft, ChevronRight, Tag } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import SEO from '../components/SEO';
 
 const Home: React.FC = () => {
   const { state } = useContext(StoreContext);
@@ -37,6 +38,10 @@ const Home: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-12 pb-20 bg-gray-50/50 dark:bg-gray-900 transition-colors duration-300">
+      <SEO 
+        title={state.settings.brandName || "Home"} 
+        description="Discover luxury fashion, electronics, and accessories at unbeatable prices." 
+      />
       
       {/* Hero Grid Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 w-full">
@@ -154,10 +159,9 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Small Promo Banners & Featured Grid */}
+      {/* Small Promo Banners */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mt-10">
-         {/* Small Banners Row */}
-         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {promoBanners.map(promo => (
                 <Link key={promo.id} to={promo.link} className="relative h-40 rounded-xl overflow-hidden group shadow-md hover:shadow-xl transition-all">
                     <img src={promo.image} alt={promo.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -172,8 +176,36 @@ const Home: React.FC = () => {
                 </Link>
             ))}
          </div>
+      </section>
 
-         {/* Featured Products Grid */}
+      {/* Categories */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mt-16">
+         <div className="flex justify-between items-end mb-8">
+            <div>
+               <span className="text-indigo-600 dark:text-indigo-400 font-bold tracking-wider uppercase text-xs">{t('home.collections')}</span>
+               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mt-1">{t('home.shopByCategory')}</h2>
+            </div>
+            <Link to="/shop" className="group flex items-center text-gray-900 dark:text-white font-semibold hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+              {t('home.viewAll')} <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+         </div>
+         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {state.categories.map((cat, idx) => (
+              <div key={cat.id} className="group relative h-80 rounded-2xl overflow-hidden cursor-pointer shadow-lg">
+                 <img src={cat.image || `https://picsum.photos/600/800?random=${10+idx}`} alt={cat.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-8">
+                    <h3 className="text-2xl font-bold text-white transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">{cat.name}</h3>
+                    <div className="h-0 group-hover:h-6 overflow-hidden transition-all duration-300">
+                       <span className="text-gray-300 text-sm flex items-center gap-2 mt-2">{t('home.browseCollection')} <ArrowRight size={14} /></span>
+                    </div>
+                 </div>
+              </div>
+            ))}
+         </div>
+      </section>
+
+      {/* Featured Products Grid */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mt-16">
          <div className="flex items-center gap-3 mb-6">
             <Tag size={20} className="text-indigo-600 dark:text-indigo-400" />
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t('home.featuredProducts')}</h2>
@@ -211,34 +243,8 @@ const Home: React.FC = () => {
          </div>
       </section>
 
-      {/* Categories */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mt-8">
-         <div className="flex justify-between items-end mb-8">
-            <div>
-               <span className="text-indigo-600 dark:text-indigo-400 font-bold tracking-wider uppercase text-xs">{t('home.collections')}</span>
-               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mt-1">{t('home.shopByCategory')}</h2>
-            </div>
-            <Link to="/shop" className="group flex items-center text-gray-900 dark:text-white font-semibold hover:text-indigo-600 dark:hover:text-indigo-400 transition">
-              {t('home.viewAll')} <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Link>
-         </div>
-         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {state.categories.map((cat, idx) => (
-              <div key={cat.id} className="group relative h-80 rounded-2xl overflow-hidden cursor-pointer shadow-lg">
-                 <img src={cat.image || `https://picsum.photos/600/800?random=${10+idx}`} alt={cat.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-8">
-                    <h3 className="text-2xl font-bold text-white transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">{cat.name}</h3>
-                    <div className="h-0 group-hover:h-6 overflow-hidden transition-all duration-300">
-                       <span className="text-gray-300 text-sm flex items-center gap-2 mt-2">{t('home.browseCollection')} <ArrowRight size={14} /></span>
-                    </div>
-                 </div>
-              </div>
-            ))}
-         </div>
-      </section>
-
       {/* New Arrivals */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mt-12">
         <div className="flex items-center gap-3 mb-2">
             <span className="h-px w-8 bg-indigo-600 dark:bg-indigo-400"></span>
             <span className="text-indigo-600 dark:text-indigo-400 font-bold tracking-wider uppercase text-xs">{t('home.recentlyAdded')}</span>
@@ -247,7 +253,7 @@ const Home: React.FC = () => {
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {newArrivals.map((product) => (
-             <Link key={product.id} to={`/product/${product.id}`} className="group relative bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-300 hover:-translate-y-2 flex flex-col overflow-hidden border border-gray-100 dark:border-gray-700">
+             <Link key={product.id} to={`/product/${product.id}`} className="group relative bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-2xl hover:shadow-indigo-500/20 transition-all duration-300 hover:-translate-y-2 flex flex-col overflow-hidden border border-gray-100 dark:border-gray-700">
                 <div className="relative h-72 overflow-hidden bg-gray-100 dark:bg-gray-700">
                   <img src={product.image} alt={product.name} className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700" />
                   
