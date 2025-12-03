@@ -275,6 +275,7 @@ type Action =
   | { type: 'LOGIN_USER'; payload: string }
   | { type: 'ADD_PRODUCT'; payload: Product }
   | { type: 'UPDATE_PRODUCT'; payload: Product }
+  | { type: 'DELETE_PRODUCT'; payload: string }
   | { type: 'ADD_ORDER'; payload: Order }
   | { type: 'UPDATE_ORDER_STATUS'; payload: { id: string; status: OrderStatus } }
   | { type: 'ADD_REVIEW'; payload: Review }
@@ -369,11 +370,13 @@ const storeReducer = (state: State, action: Action): State => {
       sync('products', 'POST', action.payload);
       return { ...state, products: [...state.products, action.payload] };
     case 'UPDATE_PRODUCT':
-       // Note: Add PUT endpoint to server if needed
        return {
          ...state,
          products: state.products.map(p => p.id === action.payload.id ? action.payload : p)
        };
+    case 'DELETE_PRODUCT':
+      sync(`products/${action.payload}`, 'DELETE', {});
+      return { ...state, products: state.products.filter(p => p.id !== action.payload) };
     case 'ADD_ORDER':
       sync('orders', 'POST', action.payload);
       return { ...state, orders: [action.payload, ...state.orders] };
@@ -406,6 +409,7 @@ const storeReducer = (state: State, action: Action): State => {
       sync('categories', 'POST', action.payload);
       return { ...state, categories: [...state.categories, action.payload] };
     case 'DELETE_CATEGORY':
+      sync(`categories/${action.payload}`, 'DELETE', {});
       return { ...state, categories: state.categories.filter(c => c.id !== action.payload) };
     case 'UPDATE_BANNER':
       return { ...state, banners: state.banners.map(b => b.id === action.payload.id ? action.payload : b) };
@@ -450,14 +454,19 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
          fetch(`${API}/promo-banners`)
       ]);
 
-      const products = await productsRes.json();
-      const categories = await catsRes.json();
-      const slides = await slidesRes.json();
-      const users = await usersRes.json();
-      const orders = await ordersRes.json();
-      const settings = await settingsRes.json();
-      const reviews = await reviewsRes.json();
-      const promoBanners = await promoRes.json();
+      let products = await productsRes.json();
+      let categories = await catsRes.json();
+      let slides = await slidesRes.json();
+      let users = await usersRes.json();
+      let orders = await ordersRes.json();
+      let settings = await settingsRes.json();
+      let reviews = await reviewsRes.json();
+      let promoBanners = await promoRes.json();
+
+      // Ensure IDs exist (map _id to id if missing)
+      products = products.map((p: any) => ({ ...p, id: p.id || p._id }));
+      categories = categories.map((c: any) => ({ ...c, id: c.id || c._id }));
+      slides = slides.map((s: any) => ({ ...s, id: s.id || s._id }));
 
       dispatch({
         type: 'LOAD_DATA',

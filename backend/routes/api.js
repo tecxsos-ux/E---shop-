@@ -84,6 +84,25 @@ router.post('/products', async (req, res) => {
   res.json(newProduct);
 });
 
+router.delete('/products/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const query = {
+        $or: [
+            { id: id },
+            { _id: mongoose.Types.ObjectId.isValid(id) ? id : null }
+        ]
+    };
+    const result = await Product.findOneAndDelete(query);
+    if (!result) {
+        return res.status(404).json({ error: 'Product not found' });
+    }
+    res.json({ message: 'Product deleted' });
+  } catch(e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // --- Categories Routes ---
 router.get('/categories', async (req, res) => {
   const categories = await Category.find();
@@ -94,6 +113,25 @@ router.post('/categories', async (req, res) => {
   const newCat = new Category(req.body);
   await newCat.save();
   res.json(newCat);
+});
+
+router.delete('/categories/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const query = {
+        $or: [
+            { id: id },
+            { _id: mongoose.Types.ObjectId.isValid(id) ? id : null }
+        ]
+    };
+    const result = await Category.findOneAndDelete(query);
+    if (!result) {
+        return res.status(404).json({ error: 'Category not found' });
+    }
+    res.json({ message: 'Category deleted' });
+  } catch(e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
 // --- Orders Routes ---

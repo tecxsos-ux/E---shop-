@@ -2,7 +2,7 @@
 import React, { useContext, useState } from 'react';
 import { StoreContext } from '../../context/StoreContext';
 import AdminLayout from '../../components/AdminLayout';
-import { Plus, Wand2, Image as ImageIcon, Loader2, Trash2, X, Upload, AlertTriangle } from 'lucide-react';
+import { Plus, Wand2, Image as ImageIcon, Loader2, Trash2, X, Upload, AlertTriangle, Edit2 } from 'lucide-react';
 import { Product, Variant } from '../../types';
 import { generateProductDescription, editProductImage } from '../../services/geminiService';
 
@@ -116,6 +116,12 @@ const AdminProducts: React.FC = () => {
       setIsModalOpen(true);
   };
 
+  const handleDelete = (id: string) => {
+      if (window.confirm("Are you sure you want to delete this product?")) {
+          dispatch({ type: 'DELETE_PRODUCT', payload: id });
+      }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -172,7 +178,7 @@ const AdminProducts: React.FC = () => {
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {state.products.map(product => (
-              <tr key={product.id}>
+              <tr key={product.id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <div className="flex-shrink-0 h-10 w-10">
@@ -186,7 +192,22 @@ const AdminProducts: React.FC = () => {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.category}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${product.price}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.stock}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 hover:text-blue-900 cursor-pointer" onClick={() => openEditModal(product)}>Edit</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex items-center gap-2">
+                    <button 
+                        onClick={() => openEditModal(product)}
+                        className="text-blue-600 hover:text-blue-900 bg-blue-50 p-1.5 rounded-md hover:bg-blue-100 transition"
+                        title="Edit"
+                    >
+                        <Edit2 size={16} />
+                    </button>
+                    <button 
+                        onClick={() => handleDelete(product.id)}
+                        className="text-red-600 hover:text-red-900 bg-red-50 p-1.5 rounded-md hover:bg-red-100 transition"
+                        title="Delete"
+                    >
+                        <Trash2 size={16} />
+                    </button>
+                </td>
               </tr>
             ))}
           </tbody>
