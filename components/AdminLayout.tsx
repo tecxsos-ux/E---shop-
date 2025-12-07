@@ -1,10 +1,13 @@
 
+'use client';
+
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { LayoutDashboard, ShoppingBag, ShoppingCart, Users, Settings, Images, Layers, MessageSquare } from 'lucide-react';
 
 const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const location = useLocation();
+  const pathname = usePathname();
 
   const links = [
     { name: 'Dashboard', path: '/admin/dashboard', icon: <LayoutDashboard size={20} /> },
@@ -27,9 +30,9 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           {links.map(link => (
             <Link
               key={link.path}
-              to={link.path}
+              href={link.path}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition ${
-                location.pathname === link.path 
+                pathname === link.path 
                   ? 'bg-indigo-50 text-indigo-700' 
                   : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
               }`}

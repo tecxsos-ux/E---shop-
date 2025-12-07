@@ -1,14 +1,14 @@
 {
   "name": "luxemarket-ai",
-  "version": "1.0.0",
-  "description": "Premium AI-powered e-commerce platform",
-  "main": "server.js",
+  "version": "2.0.0",
+  "description": "Premium AI-powered e-commerce platform built with Next.js",
   "scripts": {
-    "start": "node server.js",
-    "server": "nodemon server.js",
-    "client": "react-scripts start",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "build": "react-scripts build"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "server": "node server.js",
+    "fullstack": "concurrently \"npm run server\" \"npm run dev\""
   },
   "dependencies": {
     "@google/genai": "^0.1.1",
@@ -18,32 +18,23 @@
     "jspdf": "^2.5.1",
     "lucide-react": "^0.368.0",
     "mongoose": "^8.3.1",
+    "next": "^14.1.0",
     "nodemailer": "^6.9.13",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.22.3",
     "recharts": "^2.12.4"
   },
   "devDependencies": {
     "@types/node": "^20.12.7",
     "@types/react": "^18.2.79",
     "@types/react-dom": "^18.2.25",
+    "autoprefixer": "^10.4.19",
     "concurrently": "^8.2.2",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^14.1.0",
     "nodemon": "^3.1.0",
-    "react-scripts": "^5.0.1",
+    "postcss": "^8.4.38",
     "tailwindcss": "^3.4.3",
-    "typescript": "^4.9.5"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "typescript": "^5.4.5"
   }
 }

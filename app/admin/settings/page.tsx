@@ -1,0 +1,1 @@
+import AdminSettings from '../../../components/views/admin/Settings'; export default function Page() { return <AdminSettings />; }

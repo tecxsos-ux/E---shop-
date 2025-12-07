@@ -1,0 +1,1 @@
+import AdminDashboard from '../../../components/views/admin/Dashboard'; export default function Page() { return <AdminDashboard />; }

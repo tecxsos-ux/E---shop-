@@ -1,0 +1,1 @@
+import Contact from '../../components/views/Contact'; export default function ContactPage() { return <Contact />; }

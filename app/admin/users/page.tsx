@@ -1,0 +1,1 @@
+import AdminUsers from '../../../components/views/admin/Users'; export default function Page() { return <AdminUsers />; }

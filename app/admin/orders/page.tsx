@@ -1,0 +1,1 @@
+import AdminOrders from '../../../components/views/admin/Orders'; export default function Page() { return <AdminOrders />; }

@@ -1,0 +1,1 @@
+import ProductDetails from '../../../components/views/ProductDetails'; export default function ProductPage() { return <ProductDetails />; }

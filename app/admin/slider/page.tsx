@@ -1,0 +1,1 @@
+import AdminSliderSettings from '../../../components/views/admin/SliderSettings'; export default function Page() { return <AdminSliderSettings />; }

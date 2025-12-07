@@ -1,0 +1,1 @@
+import Shop from '../../components/views/Shop'; export default function ShopPage() { return <Shop />; }

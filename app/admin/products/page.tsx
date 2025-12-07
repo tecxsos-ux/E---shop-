@@ -1,0 +1,1 @@
+import AdminProducts from '../../../components/views/admin/Products'; export default function Page() { return <AdminProducts />; }

@@ -1,0 +1,1 @@
+import Checkout from '../../components/views/Checkout'; export default function CheckoutPage() { return <Checkout />; }

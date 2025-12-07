@@ -1,3 +1,4 @@
+'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
@@ -16,17 +17,23 @@ const ThemeContext = createContext<ThemeContextType>({
 });
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [theme, setThemeState] = useState<Theme>(() => {
-    // Check local storage or default to auto
-    const saved = localStorage.getItem('theme') as Theme;
-    if (['light', 'dark', 'classic', 'auto'].includes(saved)) return saved;
-    return 'auto';
-  });
-
-  // Track the actual visual theme being applied (resolves 'auto' to 'light' or 'dark')
+  // Initialize with 'auto' to ensure server and client match initially (hydration)
+  const [theme, setThemeState] = useState<Theme>('auto');
   const [effectiveTheme, setEffectiveTheme] = useState<'light' | 'dark' | 'classic'>('light');
+  const [mounted, setMounted] = useState(false);
+
+  // Once mounted on client, check local storage
+  useEffect(() => {
+    setMounted(true);
+    const saved = typeof window !== 'undefined' ? localStorage.getItem('theme') as Theme : null;
+    if (saved && ['light', 'dark', 'classic', 'auto'].includes(saved)) {
+        setThemeState(saved);
+    }
+  }, []);
 
   useEffect(() => {
+    if (!mounted) return;
+    
     localStorage.setItem('theme', theme);
     const root = document.documentElement;
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
@@ -62,12 +69,14 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
-  }, [theme]);
+  }, [theme, mounted]);
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme);
   };
 
+  // Prevent hydration mismatch by rendering nothing until mounted, 
+  // or render children with default theme. Rendering children is better for SEO.
   return (
     <ThemeContext.Provider value={{ theme, setTheme, effectiveTheme }}>
       {children}

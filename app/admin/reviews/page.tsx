@@ -1,0 +1,1 @@
+import AdminReviews from '../../../components/views/admin/Reviews'; export default function Page() { return <AdminReviews />; }

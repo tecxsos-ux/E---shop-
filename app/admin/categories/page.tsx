@@ -1,0 +1,1 @@
+import AdminCategories from '../../../components/views/admin/Categories'; export default function Page() { return <AdminCategories />; }
